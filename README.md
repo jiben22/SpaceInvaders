@@ -1,3 +1,3 @@
-# Space Inviders
+# Space Invaders
 
 JavaFX game project
