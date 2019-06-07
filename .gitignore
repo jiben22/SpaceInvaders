@@ -32,3 +32,6 @@ SpaceInviders.iml
 
 # End of https://www.gitignore.io/api/java
 
+# project resources
+
+projet_space_invaders/ 
