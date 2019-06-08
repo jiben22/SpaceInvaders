@@ -8,13 +8,15 @@ import lombok.Setter;
 public class Player {
     private String name;
     private int score;
-    private int lifes;
+    private int lives;
     private int credits;
 
-    public Player(String name, int score, int lifes, int credits) {
+    public Player() { }
+
+    public Player(String name, int score, int lives, int credits) {
         this.name = name;
         this.score = score;
-        this.lifes = lifes;
+        this.lives = lives;
         this.credits = credits;
     }
 }
