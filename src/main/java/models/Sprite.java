@@ -1,7 +1,7 @@
 package models;
 
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
+import javafx.scene.image.*;
+import javafx.scene.paint.Color;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -9,22 +9,53 @@ import lombok.Setter;
 public class Sprite {
     private ImageView imageView;
     private Image image;
-    private String spritePath;
-    private int widthImg;
-    private int heightImg;
+    private String pathToSpriteImg = "images/invader.png";
+    private int offsetX;
+    private int offsetY;
+    private int imgWidth;
+    private int imgHeight;
 
-    public Sprite(String spritePath, int widthImg, int heightImg) {
-        this.spritePath = spritePath;
-        this.widthImg = widthImg;
-        this.heightImg = heightImg;
+     /**
+     * Sélection du sprite dans l'image invaders.png dès l'instanciation
+     * @param offsetX
+      * décalage horizontal dans l'image
+     * @param offsetY
+      * décalage vertical dans l'image
+     * @param imgWidth
+      * largeur du sprite
+     * @param imgHeight
+      * hauteur du sprite
+      *
+      * Le tout en pixels
+     */
+    public Sprite(int offsetX, int offsetY, int imgWidth, int imgHeight) {
+        this.offsetX = offsetX;
+        this.offsetY = offsetY;
+        this.imgWidth = imgWidth;
+        this.imgHeight = imgHeight;
+    }
 
+    public Image getImage(){
         //Create image
-        image = new Image(this.spritePath, this.widthImg, this.heightImg, false, false);
+        this.image = new Image(this.pathToSpriteImg);
 
         //Create ImageView
-        imageView = new ImageView( this.spritePath );
-        imageView.setFitWidth( this.widthImg );
-        imageView.setFitHeight( this.heightImg );
-        //imageView.setPreserveRatio(true);
+        this.imageView = new ImageView();
+        this.imageView.setImage(image);
+
+        PixelReader pixelReader = image.getPixelReader();
+        WritableImage writableImage = new WritableImage((int) image.getWidth(), (int) image.getHeight());
+        PixelWriter pixelWriter = writableImage.getPixelWriter();
+
+        for(int y=this.offsetY; y<this.imgHeight+this.offsetY; y++){
+            for(int x=this.offsetX; x<this.imgWidth+this.offsetX; x++){
+                Color color = pixelReader.getColor(x, y);
+                pixelWriter.setColor(x, y, color);
+            }
+        }
+        ImageView imageViewDest = new ImageView();
+        imageViewDest.setImage(writableImage);
+
+        return imageViewDest.getImage();
     }
 }

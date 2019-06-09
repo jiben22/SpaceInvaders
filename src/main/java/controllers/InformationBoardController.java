@@ -1,0 +1,55 @@
+package controllers;
+
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.paint.Color;
+import models.Player;
+
+import java.awt.event.ActionEvent;
+import java.net.URL;
+import java.util.ResourceBundle;
+
+public class InformationBoardController extends Controller implements Initializable {
+    @FXML private Canvas informationCanvas;
+    private GraphicsContext gc;
+
+    @FXML private void drawCanvas(ActionEvent event) {
+        gc.setFill(Color.AQUA);
+        gc.fillRect(300,300,300,300);
+    }
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        gc = informationCanvas.getGraphicsContext2D();
+        gc.setFill(Color.WHITE);
+        gc.fillText(
+                getTextLives(),
+                Math.round(informationCanvas.getWidth() / 4),
+                Math.round(informationCanvas.getHeight() / 2)
+        );
+
+        gc.fillText(
+                getTextCredits(),
+                Math.round(informationCanvas.getWidth() / 2),
+                Math.round(informationCanvas.getHeight() / 2)
+        );
+    }
+
+    public String getTextLives() {
+        String lTextLives;
+        int lLives = new Player().getLives();
+        if(lLives == 1) { lTextLives = lLives + " LIFE"; }
+        else { lTextLives = lLives + " LIVES"; }
+
+        return lTextLives;
+    }
+
+    public String getTextCredits() {
+        return (
+                "CREDITS " +
+                        new Player().getCredits()
+        );
+    }
+}

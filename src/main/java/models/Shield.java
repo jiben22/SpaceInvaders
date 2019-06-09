@@ -9,7 +9,7 @@ public class Shield extends AnimatedComponent {
     private static final int xSpeed = 0;
     private static int ySpeed = 0;
 
-    public Shield(int x, int y, Sprite sprite, int width, int height) {
+    public Shield(int x, int y, Sprite sprite, int width, int height, int xSpeed, int ySpeed) {
         super(x, y, sprite, width, height, xSpeed, ySpeed);
     }
 }

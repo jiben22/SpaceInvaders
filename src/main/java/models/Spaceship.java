@@ -8,9 +8,10 @@ public class Spaceship extends AnimatedComponent {
     public static final String imgPath = "images/ship.gif";
     private static final int ySpeed = 0;
 
-    //TODO: Singleton
+    // TODO: Singleton
 
-    public Spaceship(int x, int y, Sprite sprite, int width, int height, int xSpeed) {
+
+    public Spaceship(int x, int y, Sprite sprite, int width, int height, int xSpeed, int ySpeed) {
         super(x, y, sprite, width, height, xSpeed, ySpeed);
     }
 }
