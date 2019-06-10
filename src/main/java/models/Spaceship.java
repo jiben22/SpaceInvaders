@@ -9,9 +9,7 @@ public class Spaceship extends AnimatedComponent {
     private static final int ySpeed = 0;
 
     // TODO: Singleton
-
-
-    public Spaceship(int x, int y, Sprite sprite, int width, int height, int xSpeed, int ySpeed) {
+    public Spaceship(int x, int y, Sprite sprite, int width, int height, int xSpeed) {
         super(x, y, sprite, width, height, xSpeed, ySpeed);
     }
 }

@@ -1,39 +1,38 @@
-import javafx.animation.AnimationTimer;
+import controllers.AnimatedComponentController;
+import controllers.CanvasController;
+import controllers.GameBoardController;
+import controllers.InformationBoardController;
 import javafx.application.Application;
 import javafx.scene.Scene;
-import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
 import javafx.stage.Stage;
-import models.*;
-import views.GameBoardView;
-
-import java.util.ArrayList;
-import java.util.List;
 
 
 public class Main extends Application{
+    private Pane root = new Pane();
 
-    GameBoardView gameBoardView;
-
-    public Main() {
-        this.gameBoardView = new GameBoardView();
-    }
+    private AnimatedComponentController animatedComponentController = AnimatedComponentController.getInstance();
+    private CanvasController canvasController = CanvasController.getInstance();
+    private GameBoardController gameBoardController = GameBoardController.getInstance();
+    private InformationBoardController informationBoardController = InformationBoardController.getInstance();
 
     @Override
     public void start(Stage primaryStage) {
-        //Add Canvas to Parent and AnimatedComponents
-        this.gameBoardView.getRoot().getChildren().add(this.gameBoardView.getCanvas());
-        this.gameBoardView.getRoot().setStyle("-fx-background-color: black");
-        this.gameBoardView.writeHeader();
-        this.gameBoardView.writeFooter();
-        this.gameBoardView.addAnimatedComponents();
+        //Add Canvas to Parent
+        root.getChildren().add(canvasController.getCanvas());
+        root.setStyle("-fx-background-color: black");
+
+        //Add information
+        informationBoardController.writeHeader();
+        informationBoardController.writeFooter();
+
+        //Add Animated Components
+        animatedComponentController.addAnimatedComponents();
 
         //Add Parent to Scene
-        Scene scene = new Scene(this.gameBoardView.getRoot());
+        Scene scene = new Scene(root);
         //Add Event Actions for keyboard Events
-        this.gameBoardView.keyboardEvents(scene);
+        gameBoardController.keyboardEvents(scene);
 
         primaryStage.setTitle("SpaceInvaders");
         primaryStage.setResizable(true);
@@ -42,10 +41,6 @@ public class Main extends Application{
     }
 
     public static void main(String[] args) {
-
-
         launch(args);
     }
-
-
 }

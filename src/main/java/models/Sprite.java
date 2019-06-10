@@ -9,7 +9,7 @@ import lombok.Setter;
 public class Sprite {
     private ImageView imageView;
     private Image image;
-    private String pathToSpriteImg = "images/invader.png";
+    private static final String pathToSpriteImg = "images/invader.png";
     private int offsetX;
     private int offsetY;
     private int imgWidth;

@@ -1,40 +1,55 @@
 package controllers;
 
-import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import models.Player;
 
-import java.awt.event.ActionEvent;
-import java.net.URL;
-import java.util.ResourceBundle;
+public class InformationBoardController {
+    private static InformationBoardController informationBoardController = new InformationBoardController();
+    public static InformationBoardController getInstance() {
+        return informationBoardController;
+    }
+    private InformationBoardController() {}
 
-public class InformationBoardController extends Controller implements Initializable {
-    @FXML private Canvas informationCanvas;
-    private GraphicsContext gc;
+    private CanvasController canvasController = CanvasController.getInstance();
+    private GraphicsContext graphicsContext = canvasController.getCanvas().getGraphicsContext2D();
 
-    @FXML private void drawCanvas(ActionEvent event) {
-        gc.setFill(Color.AQUA);
-        gc.fillRect(300,300,300,300);
+    public void writeHeader() {
+        int heightText = 20;
+
+        graphicsContext.setFill(Color.WHITE);
+        graphicsContext.fillText(
+                "SCORE < 1 >" + "\n" +
+                        "0",
+                0,
+                heightText);
+
+        graphicsContext.fillText(
+                "HIGH SCORE" + "\n" +
+                        "0",
+                Math.round(canvasController.getCanvas().getWidth() / 2),
+                heightText);
+
+        graphicsContext.fillText(
+                "SCORE < 2 >" + "\n" +
+                        "0",
+                Math.round(canvasController.getCanvas().getWidth() - 100),
+                heightText);
     }
 
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        gc = informationCanvas.getGraphicsContext2D();
-        gc.setFill(Color.WHITE);
-        gc.fillText(
-                getTextLives(),
-                Math.round(informationCanvas.getWidth() / 4),
-                Math.round(informationCanvas.getHeight() / 2)
-        );
+    public void writeFooter() {
+        double heightText =  Math.round(canvasController.getCanvas().getHeight());
 
-        gc.fillText(
+        graphicsContext.setFill(Color.WHITE);
+        graphicsContext.fillText(
+                getTextLives(),
+                0,
+                heightText);
+
+        graphicsContext.fillText(
                 getTextCredits(),
-                Math.round(informationCanvas.getWidth() / 2),
-                Math.round(informationCanvas.getHeight() / 2)
-        );
+                Math.round(canvasController.getCanvas().getWidth() - 100),
+                heightText);
     }
 
     public String getTextLives() {
