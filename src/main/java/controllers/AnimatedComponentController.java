@@ -26,10 +26,10 @@ public class AnimatedComponentController {
         //Create new Spaceship
         mSpaceship = new Spaceship(
                 (int) Math.round(canvasController.getCanvas().getWidth() / 2),
-                (int) Math.round(canvasController.getCanvas().getHeight() - 40),
-                new Sprite(50, 40, 40, 40),
-                40,
-                100,
+                (int) Math.round(canvasController.getCanvas().getHeight() - 100),
+                new Sprite(Spaceship.offsetX, Spaceship.offsetY, Spaceship.imgWidth, Spaceship.imgHeight),
+                Spaceship.imgWidth,
+                Spaceship.imgHeight,
                 30
         );
         canvasController.draw(mSpaceship);
@@ -39,7 +39,7 @@ public class AnimatedComponentController {
         int heightAlien = 22;
 
         int xAlien = 0;
-        int yAlien = 0;
+        int yAlien = 50;
 
         for(int i = 0; i < 5; i++) {
             xAlien += widthAlien;
@@ -106,7 +106,7 @@ public class AnimatedComponentController {
 
     private void moveLeft(AnimatedComponent animatedComponent) {
         canvasController.clear(animatedComponent);
-        animatedComponent.setX( animatedComponent.getX() + animatedComponent.getXSpeed()) ;
+        animatedComponent.setX( animatedComponent.getX() - animatedComponent.getXSpeed()) ;
         canvasController.draw(animatedComponent);
     }
 

@@ -35,27 +35,7 @@ public class Sprite {
         this.imgHeight = imgHeight;
     }
 
-    public Image getImage(){
-        //Create image
-        this.image = new Image(this.pathToSpriteImg);
-
-        //Create ImageView
-        this.imageView = new ImageView();
-        this.imageView.setImage(image);
-
-        PixelReader pixelReader = image.getPixelReader();
-        WritableImage writableImage = new WritableImage((int) image.getWidth(), (int) image.getHeight());
-        PixelWriter pixelWriter = writableImage.getPixelWriter();
-
-        for(int y=this.offsetY; y<this.imgHeight+this.offsetY; y++){
-            for(int x=this.offsetX; x<this.imgWidth+this.offsetX; x++){
-                Color color = pixelReader.getColor(x, y);
-                pixelWriter.setColor(x, y, color);
-            }
-        }
-        ImageView imageViewDest = new ImageView();
-        imageViewDest.setImage(writableImage);
-
-        return imageViewDest.getImage();
+    public Image getImage() {
+        return new Image(pathToSpriteImg);
     }
 }
