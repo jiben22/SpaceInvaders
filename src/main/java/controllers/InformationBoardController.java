@@ -1,7 +1,10 @@
 package controllers;
 
+import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.TextAlignment;
 import models.Player;
 
 public class InformationBoardController {
@@ -11,60 +14,90 @@ public class InformationBoardController {
     }
     private InformationBoardController() {}
 
-    private CanvasController canvasController = CanvasController.getInstance();
-    private GraphicsContext graphicsContext = canvasController.getCanvas().getGraphicsContext2D();
+    private Canvas canvas = CanvasController.getInstance().getCanvas();
+    private GraphicsContext graphicsContext = CanvasController.getInstance().getCanvas().getGraphicsContext2D();
 
-    public void writeHeader() {
-        int heightText = 20;
+    private static final String mScore1 = "SCORE < 1 >";
+    private static final String mHiScore = "HIGH SCORE";
+    private static final String mScore2 = "SCORE < 2 >";
+    private static final String mLife = "LIFE";
+    private static final String mLives = "LIVES";
+    private static final String mCredits = "CREDITS";
 
+    public void addScores(Player player) {
         graphicsContext.setFill(Color.WHITE);
-        graphicsContext.fillText(
-                "SCORE < 1 >" + "\n" +
-                        "0",
-                0,
-                heightText);
 
+        //Score1
+        graphicsContext.setTextAlign(TextAlignment.LEFT);
         graphicsContext.fillText(
-                "HIGH SCORE" + "\n" +
-                        "0",
-                Math.round(canvasController.getCanvas().getWidth() / 2),
-                heightText);
+                getTextScore1(player),
+                10,
+                20);
 
+        //HiScore
+        graphicsContext.setTextAlign(TextAlignment.CENTER);
         graphicsContext.fillText(
-                "SCORE < 2 >" + "\n" +
-                        "0",
-                Math.round(canvasController.getCanvas().getWidth() - 100),
-                heightText);
+                getTextHiScore(),
+                Math.round( canvas.getWidth() / 2 ) ,
+                20);
+
+        //Score2
+        graphicsContext.setTextAlign(TextAlignment.LEFT);
+        graphicsContext.fillText(
+                getTextScore2(player),
+                Math.round( canvas.getWidth() - 90 ),
+                20);
     }
 
-    public void writeFooter() {
-        double heightText =  Math.round(canvasController.getCanvas().getHeight());
-
+    public void addPlayerInformation(Player player) {
         graphicsContext.setFill(Color.WHITE);
+        //Lives
         graphicsContext.fillText(
-                getTextLives(),
-                0,
-                heightText);
-
+                getTextLives(player),
+                10,
+                Math.round( canvas.getHeight() ));
+        //Credits
         graphicsContext.fillText(
-                getTextCredits(),
-                Math.round(canvasController.getCanvas().getWidth() - 100),
-                heightText);
+                getTextCredits(player),
+                Math.round( canvas.getWidth() - 90 ),
+                Math.round( canvas.getHeight() ));
     }
 
-    public String getTextLives() {
+    public String getTextScore1(Player player) {
+        return (
+                mScore1 + "\n" +
+                        player.getScore()
+        );
+    }
+
+    public String getTextHiScore() {
+        //Todo: max between two players
+        return (
+                mHiScore + "\n" +
+                        "0"
+        );
+    }
+
+    public String getTextScore2(Player player) {
+        return (
+                mScore2 + "\n" +
+                        player.getScore()
+        );
+    }
+
+    public String getTextLives(Player player) {
         String lTextLives;
-        int lLives = new Player().getLives();
-        if(lLives == 1) { lTextLives = lLives + " LIFE"; }
-        else { lTextLives = lLives + " LIVES"; }
+        int lLives = player.getLives();
+        if(lLives == 1) { lTextLives = lLives + " " + mLife; }
+        else { lTextLives = lLives + " " + mLives; }
 
         return lTextLives;
     }
 
-    public String getTextCredits() {
+    public String getTextCredits(Player player) {
         return (
-                "CREDITS " +
-                        new Player().getCredits()
+                mCredits + " " +
+                        player.getCredits()
         );
     }
 }

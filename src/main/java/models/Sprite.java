@@ -1,7 +1,6 @@
 package models;
 
 import javafx.scene.image.*;
-import javafx.scene.paint.Color;
 import lombok.Getter;
 import lombok.Setter;
 

@@ -14,14 +14,17 @@ public class GameBoardController {
     public void keyboardEvents(Scene scene) {
         //Keyboard events
         scene.setOnKeyPressed(e -> {
-            String code = e.getCode().toString();
-
-            //Spaceship
-            if(code.contains("LEFT")) { animatedComponentController.moveLeftSpaceship(); }
-            else if(code.contains("RIGHT")) { animatedComponentController.moveRightSpaceship(); }
-
-            //Bullet
-            else if(code.contains("SPACE")) { animatedComponentController.shotBullet(); }
+            switch (e.getCode()) {
+                case LEFT:
+                    animatedComponentController.moveLeftSpaceship();
+                    break;
+                case RIGHT:
+                    animatedComponentController.moveRightSpaceship();
+                    break;
+                case SPACE:
+                    animatedComponentController.shotBullet();
+                    break;
+            }
         });
     }
 }

@@ -27,32 +27,40 @@ public class AnimatedComponentController {
         mSpaceship = new Spaceship(
                 (int) Math.round(canvasController.getCanvas().getWidth() / 2),
                 (int) Math.round(canvasController.getCanvas().getHeight() - 100),
-                new Sprite(Spaceship.offsetX, Spaceship.offsetY, Spaceship.imgWidth, Spaceship.imgHeight),
-                Spaceship.imgWidth,
+                new Sprite(Spaceship.offsetX, Spaceship.offsetY, Spaceship.imgWidth/2, Spaceship.imgHeight),
+                Spaceship.imgWidth/2,
                 Spaceship.imgHeight,
                 30
         );
         canvasController.draw(mSpaceship);
 
-        //Create new Alien
-        int widthAlien = 33;
-        int heightAlien = 22;
+        //Define number of aliens per line/column
+        int numberAliensPerLine = 1;
+        int numberAliensPerColumn = 1;
 
-        int xAlien = 0;
+        //Create Aliens
         int yAlien = 50;
+        for( int iLine = 0; iLine < numberAliensPerLine; iLine++ ) {
+            //Start at x = 0
+            int xAlien = 0;
+            for( int iColumn = 0; iColumn < numberAliensPerColumn; iColumn++ ) {
+                //Increment x
+                xAlien += Alien.imgWidth + 5;
 
-        for(int i = 0; i < 5; i++) {
-            xAlien += widthAlien;
-            mAliens.add(
-                    new Alien(
-                            xAlien,
-                            yAlien,
-                            new Sprite(547, 200, widthAlien, heightAlien),
-                            widthAlien,
-                            heightAlien,
-                            2
-                    )
-            );
+                mAliens.add(
+                        new Alien(
+                                xAlien,
+                                yAlien,
+                                new Sprite(Alien.offsetX, Alien.offsetY, Alien.imgWidth/2, Alien.imgHeight),
+                                Alien.imgWidth/2,
+                                Alien.imgHeight,
+                                2
+                        )
+                );
+            }
+
+            //Increment y
+            yAlien += Alien.imgHeight + 5;
         }
 
         for(Alien lAlien: mAliens) {
@@ -64,21 +72,36 @@ public class AnimatedComponentController {
             @Override
             public void handle(long now) {
                 for(Alien lAlien: mAliens) {
-                    if( lAlien.getX() >= canvasController.getCanvas().getWidth() ) {
-                        lAlien.setX(0);
-                        lAlien.setY( lAlien.getY() + lAlien.getHeight() );
-                    }
-
-                    //Move Alien
-                    moveRight(lAlien);
+                    moveAlien(lAlien);
                 }
             }
         }.start();
     }
 
     /* Displacement of the spaceship */
-    public void moveLeftSpaceship() { moveLeft(mSpaceship); }
-    public void moveRightSpaceship() { moveRight(mSpaceship); }
+    public void moveLeftSpaceship() {
+        if( mSpaceship.getX() - Spaceship.imgWidth > 0 ) { moveLeft(mSpaceship); }
+    }
+    public void moveRightSpaceship() {
+        if( mSpaceship.getX() + Spaceship.imgWidth < canvasController.getCanvas().getWidth() ) {
+            moveRight(mSpaceship);
+        }
+    }
+
+    /* Displacement of Aliens */
+    public void moveAlien(Alien alien) {
+
+        if( alien.getX() < alien.getWidth() ) {
+            for (Alien lAlien: mAliens) {
+                lAlien.setY(lAlien.getY() + lAlien.getHeight());
+            }
+        }
+        else if ( alien.getX() > canvasController.getCanvas().getWidth() + alien.getWidth() ) {
+            for (Alien lAlien: mAliens) {
+                lAlien.setY(lAlien.getY() + lAlien.getHeight());
+            }
+        }
+    }
 
     /* Shot bullets */
     public void shotBullet() {
@@ -111,16 +134,12 @@ public class AnimatedComponentController {
     }
 
     public void createBullet()  {
-        //Create Bullet
-        int bulletWidth = 20;
-        int bulletHeight = 20;
-
         Bullet lBullet = new Bullet(
-                mSpaceship.getX() + mSpaceship.getWidth()/2 - bulletWidth/2,
+                mSpaceship.getX() + mSpaceship.getWidth()/2 - Bullet.imgWidth/2,
                 mSpaceship.getY() - mSpaceship.getHeight()/2,
-                new Sprite(20, 20, 20, 20),
-                bulletWidth,
-                bulletHeight,
+                new Sprite(Bullet.offsetX, Bullet.offsetY, Bullet.imgWidth, Bullet.imgHeight/3),
+                Bullet.imgWidth,
+                Bullet.imgHeight/3,
                 10
         );
 
