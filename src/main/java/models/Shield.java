@@ -5,11 +5,15 @@ import lombok.Setter;
 
 @Getter @Setter
 public class Shield extends AnimatedComponent {
-    //public static final String imgPath = "images/shield.gif";
     private static final int xSpeed = 0;
-    private static int ySpeed = 0;
+    private static final int ySpeed = 0;
 
-    public Shield(int x, int y, Sprite sprite, int width, int height) {
-        super(x, y, sprite, width, height, xSpeed, ySpeed);
+    private Shield(int x, int y, Sprite sprite) {
+        super(x, y, sprite, xSpeed, ySpeed);
+    }
+
+    private Shield shield1(int x, int y) {
+        Sprite sprite = new Sprite(0, 334, 332, 36);
+        return new Shield(x, y, sprite);
     }
 }

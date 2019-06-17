@@ -5,21 +5,15 @@ import lombok.Setter;
 
 @Getter @Setter
 public class Alien extends AnimatedComponent {
-    public static final String imgPath = "images/invader.png";
     private static final int ySpeed = 0;
-    public static final int offsetX = 5;
-    public static final int offsetY = 222;
-    public static final int offsetX1 = 69;
-    public static final int offsetY1 = 240;
-    public static final int imgWidth = offsetX1 - offsetX;
-    public static final int imgHeight = offsetY1 - offsetY;
 
-    private Alien(int x, int y, Sprite sprite, int width, int height, int xSpeed) {
-        super(x, y, sprite, width, height, xSpeed, ySpeed);
+    private Alien(int x, int y, Sprite sprite, int xSpeed) {
+        super(x, y, sprite, xSpeed, ySpeed);
     }
 
-    public static Alien Alien1() {
-        return new Alien();
+    public static Alien getAlien1(int x, int y, int xSpeed) {
+        Sprite sprite = new Sprite(5, 222, 64, 18);
+        return new Alien(x, y, sprite, xSpeed);
     }
 
 }
