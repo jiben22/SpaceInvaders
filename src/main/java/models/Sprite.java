@@ -6,35 +6,17 @@ import lombok.Setter;
 
 @Getter @Setter
 public class Sprite {
-    private ImageView imageView;
-    private Image image;
-    private static final String pathToSpriteImg = "images/invader.png";
-    private int offsetX;
-    private int offsetY;
-    private int imgWidth;
-    private int imgHeight;
+    private final Image image = new Image("images/invader.png");
+    private final ImageView imageView = new ImageView(image);
+    private int dx;
+    private int dy;
+    private int width;
+    private int height;
 
-     /**
-     * Sélection du sprite dans l'image invaders.png dès l'instanciation
-     * @param offsetX
-      * décalage horizontal dans l'image
-     * @param offsetY
-      * décalage vertical dans l'image
-     * @param imgWidth
-      * largeur du sprite
-     * @param imgHeight
-      * hauteur du sprite
-      *
-      * Le tout en pixels
-     */
-    public Sprite(int offsetX, int offsetY, int imgWidth, int imgHeight) {
-        this.offsetX = offsetX;
-        this.offsetY = offsetY;
-        this.imgWidth = imgWidth;
-        this.imgHeight = imgHeight;
-    }
-
-    public Image getImage() {
-        return new Image(pathToSpriteImg);
+    public Sprite(int dx, int dy, int width, int height) {
+        this.dx = dx;
+        this.dy = dy;
+        this.width = width;
+        this.height = height;
     }
 }

@@ -1,15 +1,7 @@
 package models;
 
-import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.image.Image;
 import lombok.Getter;
 import lombok.Setter;
-
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 
 @Getter @Setter
 public abstract class AnimatedComponent {
@@ -20,16 +12,39 @@ public abstract class AnimatedComponent {
     private int height;
     private int xSpeed;
     private int ySpeed;
+    private boolean canMove;
 
-    public AnimatedComponent(int x, int y, Sprite sprite, int width, int height, int xSpeed, int ySpeed) {
+    private SpaceCanvas spaceCanvas = SpaceCanvas.getInstance();
+
+    public AnimatedComponent(int x, int y, Sprite sprite, int xSpeed, int ySpeed) {
         this.x = x;
         this.y = y;
         this.sprite = sprite;
-        this.width = width;
-        this.height = height;
         this.xSpeed = xSpeed;
         this.ySpeed = ySpeed;
     }
 
+    private void moveUp() {
+        spaceCanvas.clear(this);
+        this.y -= this.getYSpeed();
+        spaceCanvas.draw(this);
+    }
 
+    private void moveRight() {
+        spaceCanvas.clear(this);
+        this.x += this.getXSpeed();
+        spaceCanvas.draw(this);
+    }
+
+    private void moveDown() {
+        spaceCanvas.clear(this);
+        this.y += this.getYSpeed();
+        spaceCanvas.draw(this);
+    }
+
+    private void moveLeft() {
+        spaceCanvas.clear(this);
+        this.x -= this.getXSpeed();
+        spaceCanvas.draw(this);
+    }
 }

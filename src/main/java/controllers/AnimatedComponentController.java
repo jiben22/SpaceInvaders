@@ -108,31 +108,6 @@ public class AnimatedComponentController {
         createBullet();
     }
 
-    private void moveUp(AnimatedComponent animatedComponent) {
-        canvasController.clear(animatedComponent);
-        animatedComponent.setY( animatedComponent.getY() - animatedComponent.getYSpeed() );
-        canvasController.draw(animatedComponent);
-    }
-
-    private void moveRight(AnimatedComponent animatedComponent) {
-        canvasController.clear(animatedComponent);
-        animatedComponent.setX( animatedComponent.getX() + animatedComponent.getXSpeed() );
-        canvasController.draw(animatedComponent);
-    }
-
-    private void moveDown(AnimatedComponent animatedComponent) {
-        canvasController.clear(animatedComponent);
-        animatedComponent.setY( animatedComponent.getY() + animatedComponent.getYSpeed() );
-        canvasController.draw(animatedComponent);
-    }
-
-
-    private void moveLeft(AnimatedComponent animatedComponent) {
-        canvasController.clear(animatedComponent);
-        animatedComponent.setX( animatedComponent.getX() - animatedComponent.getXSpeed()) ;
-        canvasController.draw(animatedComponent);
-    }
-
     public void createBullet()  {
         Bullet lBullet = new Bullet(
                 mSpaceship.getX() + mSpaceship.getWidth()/2 - Bullet.imgWidth/2,

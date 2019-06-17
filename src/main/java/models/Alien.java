@@ -14,8 +14,12 @@ public class Alien extends AnimatedComponent {
     public static final int imgWidth = offsetX1 - offsetX;
     public static final int imgHeight = offsetY1 - offsetY;
 
-    public Alien(int x, int y, Sprite sprite, int width, int height, int xSpeed) {
+    private Alien(int x, int y, Sprite sprite, int width, int height, int xSpeed) {
         super(x, y, sprite, width, height, xSpeed, ySpeed);
+    }
+
+    public static Alien Alien1() {
+        return new Alien();
     }
 
 }
