@@ -1,9 +1,11 @@
 import controllers.*;
+import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import models.Player;
+import models.SpaceCanvas;
 
 
 public class Game extends Application{
@@ -11,35 +13,87 @@ public class Game extends Application{
     private MainController mainController = MainController.getInstance();
 
     @Override
-    public void start(Stage primaryStage) {
+    public void start(Stage theStage) {
         //Add SpaceCanvas to Parent
-        root.getChildren().add( mainController.canvasController.getCanvas() );
+        root.getChildren().add( SpaceCanvas.getInstance() );
         root.setStyle("-fx-background-color: black");
-
-        //Create player
-        Player player = new Player("Player1", 3, 5);
-        //Add scores and player information
-        mainController.informationBoardController.addScores(player);
-        mainController.informationBoardController.addPlayerInformation(player);
 
         //Create Scene
         Scene scene = new Scene(root);
 
-        //Create menu
-        //mainController.gameBoardController.createMenu();
+        theStage.setTitle("SpaceInvaders");
+        theStage.setResizable(true);
+        theStage.setScene(scene);
 
-        //Add Animated Components
-        mainController.animatedComponentController.addAnimatedComponents();
-        //Add Event Actions for keyboard Events
-        mainController.gameBoardController.keyboardEvents(scene);
 
-        primaryStage.setTitle("SpaceInvaders");
-        primaryStage.setResizable(true);
-        primaryStage.setScene(scene);
-        primaryStage.show();
+
+        new AnimationTimer(){
+            @Override
+            public void handle(long l) {
+
+                /*
+                * Les aliens se déplacent de gauche à droite et descendent lorsqu'il touchent le bord du canvas
+                *
+                * Les bullets se déplacent de bas en haut et détruisent les aliens à leur contact
+                *
+                * Le spaceship se délplace de gauche à droite
+                *
+                * Elements qui demandent une action de l'utilisateur :
+                *  - Spaceship
+                *  - Bullet
+                *
+                * Elements qui ne demandent pas d'action de l'utilisateur :
+                *  - Alien
+                *
+                * */
+
+                aliensHaveWon();
+                collisionHandler();
+                alienWaveIsStillAlive();
+
+
+
+
+            }
+        }.start();
+
+
+
+        theStage.show();
     }
 
-    public static void main(String[] args) {
-        launch(args);
+    private void collisionHandler(){
+        if(collision) {
+            //on retire l'alien en question
+            //ajouter explosion
+            //retirer explosion
+            //retirer bullet
+            //mettre à jour le score
+        }
     }
+
+    private void aliensHaveWon() {
+        // si les coordonnées aliens
+
+    }
+
+    private void alienWaveIsStillAlive(){
+        // si tous les aliens sont morts, déploiement d'une nouvelle vague plus forte (vitesse++, musique++)
+        //Le caractère infini du jeu va se faire ici
+
+
+    }
+
+    public void keyboardEvents(Scene theStage){
+
+        theStage.setOnKeyPressed(e -> {
+            switch (e.getCode()){
+                case LEFT: break;
+                case RIGHT: break;
+                case SPACE: break;
+            }
+        });
+
+    }
+    public static void main(String[] args) { launch(args); }
 }
