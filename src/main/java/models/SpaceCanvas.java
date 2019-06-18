@@ -2,7 +2,10 @@ package models;
 
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter @Setter
 public class SpaceCanvas {
     private static SpaceCanvas ourInstance = new SpaceCanvas();
     public static SpaceCanvas getInstance() {
@@ -10,11 +13,11 @@ public class SpaceCanvas {
     }
 
     private Canvas canvas;
-    private GraphicsContext graphicsContext;
+    public GraphicsContext graphicsContext;
 
     private SpaceCanvas() {
-        //TODO: which size ?
-        //this.canvas = new Canvas();
+        this.canvas = new Canvas(600, 800);
+        this.graphicsContext = canvas.getGraphicsContext2D();
     }
 
     public void clear(AnimatedComponent animatedComponent) {

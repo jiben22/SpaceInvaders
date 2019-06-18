@@ -1,25 +1,25 @@
-import controllers.*;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
-import models.Player;
 import models.SpaceCanvas;
 
 
 public class Game extends Application{
     private Pane root = new Pane();
-    private MainController mainController = MainController.getInstance();
+    private SpaceCanvas spaceCanvas = SpaceCanvas.getInstance();
 
     @Override
     public void start(Stage theStage) {
         //Add SpaceCanvas to Parent
-        root.getChildren().add( SpaceCanvas.getInstance() );
+
+        root.getChildren().add( spaceCanvas.getCanvas() );
         root.setStyle("-fx-background-color: black");
 
         //Create Scene
         Scene scene = new Scene(root);
+
 
         theStage.setTitle("SpaceInvaders");
         theStage.setResizable(true);
@@ -60,6 +60,7 @@ public class Game extends Application{
 
 
         theStage.show();
+
     }
 
     private void collisionHandler(){
