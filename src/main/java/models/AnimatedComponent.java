@@ -16,10 +16,12 @@ public abstract class AnimatedComponent {
 
     private SpaceCanvas spaceCanvas = SpaceCanvas.getInstance();
 
-    public AnimatedComponent(int x, int y, Sprite sprite, int xSpeed, int ySpeed) {
+    public AnimatedComponent(int x, int y, Sprite sprite, int width, int height, int xSpeed, int ySpeed) {
         this.x = x;
         this.y = y;
         this.sprite = sprite;
+        this.width = width;
+        this.height = height;
         this.xSpeed = xSpeed;
         this.ySpeed = ySpeed;
     }
