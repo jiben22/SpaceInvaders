@@ -11,8 +11,8 @@ public class Spaceship extends AnimatedComponent {
         super(x, y, sprite, width, height, xSpeed, ySpeed);
     }
 
-    private Spaceship spaceship1(int x, int y, int xSpeed) {
-        Sprite sprite = new Sprite(409, 311, 66, 19);
-        return new Spaceship(x, y, sprite, sprite.getWidth() / 2, sprite.getHeight(), xSpeed);
+    public static Spaceship spaceship1(int x, int y, int xSpeed) {
+        Sprite sprite = new Sprite(409, 311, 66, 19, 1, 2);
+        return new Spaceship(x, y, sprite, sprite.getWidth() / sprite.getNbFrames(), sprite.getHeight(), xSpeed);
     }
 }

@@ -1,22 +1,30 @@
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.scene.Scene;
+import javafx.scene.canvas.Canvas;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import models.Alien;
+import models.Bullet;
 import models.SpaceCanvas;
+import models.Spaceship;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class Game extends Application{
     private Pane root = new Pane();
     private SpaceCanvas spaceCanvas = SpaceCanvas.getInstance();
+    private Canvas canvas = spaceCanvas.getCanvas();
+
+    private Spaceship spaceship;
     private List<Alien> mAliens = new ArrayList<>();
+    private List<Bullet> mBullets = new ArrayList<>();
 
     @Override
     public void start(Stage theStage) {
         //Add SpaceCanvas to Parent
-        root.getChildren().add( spaceCanvas.getCanvas() );
+        root.getChildren().add( canvas );
         root.setStyle("-fx-background-color: black");
 
         //Create Scene
@@ -26,9 +34,12 @@ public class Game extends Application{
         theStage.setResizable(true);
         theStage.setScene(scene);
 
+        //Add Spaceship
+        createSpaceship();
+
         //Add Aliens
-        int aliensPerRow = 5;
-        int aliensPerColumn = 5;
+        int aliensPerRow = 1;
+        int aliensPerColumn = 1;
         int alienXSpeed = 3;
         createAliens(aliensPerRow, aliensPerColumn, alienXSpeed);
 
@@ -37,23 +48,29 @@ public class Game extends Application{
             public void handle(long l) {
 
                 /*
-                * Les aliens se déplacent de gauche à droite et descendent lorsqu'il touchent le bord du canvas
-                *
-                * Les bullets se déplacent de bas en haut et détruisent les aliens à leur contact
-                *
-                * Le spaceship se délplace de gauche à droite
-                *
-                * Elements qui demandent une action de l'utilisateur :
-                *  - Spaceship
-                *  - Bullet
-                *
-                * Elements qui ne demandent pas d'action de l'utilisateur :
-                *  - Alien
-                *
-                * */
+                 * Les aliens se déplacent de gauche à droite et descendent lorsqu'il touchent le bord du canvas
+                 *
+                 /* Les bullets se déplacent de bas en haut et détruisent les aliens à leur contact */
+                moveBullets();
+
+                /* Check collision between Bullet and Alien */
+                collisionHandler();
+                 /* Le spaceship se délplace de gauche à droite
+                 *
+                 * Elements qui demandent une action de l'utilisateur :
+                 *  - Spaceship
+                 *  - Bullet
+                 *
+                 *
+                 * Elements qui ne demandent pas d'action de l'utilisateur :
+                 *  - Alien
+                 * */
+                for (Alien lAlien: mAliens) {
+                    spaceCanvas.clear(lAlien);
+                    spaceCanvas.draw(lAlien);
+                }
 
                 aliensHaveWon();
-                collisionHandler();
                 alienWaveIsStillAlive();
 
 
@@ -63,19 +80,56 @@ public class Game extends Application{
         }.start();
 
 
-
+        keyboardEvents(scene);
         theStage.show();
 
     }
 
     private void collisionHandler(){
+        //Foreach bullet, check if there is a collision with an alien
+        for( int indexBullet = 0; indexBullet < mBullets.size(); indexBullet++ ) {
+            Bullet lBullet = mBullets.get(indexBullet);
+
+            for( int indexAlien = 0; indexAlien < mAliens.size(); indexAlien++ ) {
+                Alien lAlien = mAliens.get(indexAlien);
+
+                //There is a collision
+                //TODO: Fix detect collision
+                if( lBullet.getY() >= lAlien.getX() && lBullet.getY() <= (lAlien.getX() + lAlien.getHeight() + lAlien.getWidth()) ) {
+                    //Clear bullet and alien
+                    spaceCanvas.clear(lBullet);
+                    spaceCanvas.clear(lAlien);
+
+                    //Remove bullet and alien from List
+                    mBullets.remove(indexBullet);
+                    mAliens.remove(indexAlien);
+                    break;
+                }
+            }
+        }
         //if(collision) {
-            //on retire l'alien en question
-            //ajouter explosion
-            //retirer explosion
-            //retirer bullet
-            //mettre à jour le score
+        //on retire l'alien en question
+        //ajouter explosion
+        //retirer explosion
+        //retirer bullet
+        //mettre à jour le score
         //}
+    }
+
+    private void moveBullets() {
+        for( int indexBullet = 0; indexBullet < mBullets.size(); indexBullet++ ) {
+            Bullet bullet = mBullets.get(indexBullet);
+            if( bullet.getY() > 0 ) {
+                bullet.getSprite().nextFrameHeight();
+                bullet.moveUp();
+            } else {
+                //Clear bullet
+                spaceCanvas.clear(bullet);
+                //Remove bullet of List
+                mBullets.remove(indexBullet);
+                break;
+            }
+        }
     }
 
     private void aliensHaveWon() {
@@ -93,12 +147,39 @@ public class Game extends Application{
 
         theStage.setOnKeyPressed(e -> {
             switch (e.getCode()){
-                case LEFT: break;
-                case RIGHT: break;
-                case SPACE: break;
+                //TODO: verify spaceship is NOT NULL !
+                case LEFT:
+                    if( spaceship.getX() >= 0  ) {
+                        spaceship.getSprite().nextFrameWidth();
+                        spaceship.moveLeft();
+                    }
+                    break;
+                case RIGHT:
+                    if( spaceship.getX() <= canvas.getWidth()  ) {
+                        spaceship.getSprite().nextFrameWidth();
+                        spaceship.moveRight();
+                    }
+                    break;
+                case SPACE:
+                    createBullet();
+                    break;
             }
         });
 
+    }
+
+    private void createSpaceship() {
+        spaceship = Spaceship.spaceship1((int) canvas.getWidth() / 2, (int) canvas.getHeight(), 10);
+        //Get 1st frame of spaceship
+        spaceship.getSprite().setWidth( spaceship.getSprite().getWidth() / 2 );
+        //Modify x, y positions on canvas of spaceship with his width and his height
+        spaceship.setWidth( spaceship.getWidth() * 2 );
+        spaceship.setHeight( spaceship.getHeight() * 2 );
+        spaceship.setX( spaceship.getX() - spaceship.getWidth() / 2 );
+        spaceship.setY( spaceship.getY() - spaceship.getHeight());
+
+        //Draw spaceship
+        spaceCanvas.draw(spaceship);
     }
 
     private void createAliens(int aliensPerRow, int aliensPerColumn, int alienXSpeed) {
@@ -113,9 +194,13 @@ public class Game extends Application{
             for( int iRow = 0; iRow < aliensPerRow; iRow++ ) {
                 //Create new Alien
                 Alien alien = Alien.alien1(x, y, alienXSpeed);
-                alien.getSprite().setWidth( alien.getSprite().getWidth() / 2 );
+
+                //Define frame of size of alien
+                alien.getSprite().setWidth( alien.getSprite().getWidth() / alien.getSprite().getNbFrames() );
                 alien.setWidth( (int) (alien.getWidth() * 1.2) );
                 alien.setHeight( (int) (alien.getHeight() * 1.2) );
+
+                //Add alien to List
                 mAliens.add(alien);
                 //Increment x position with alien width
                 x += alien.getWidth() + 10;
@@ -130,5 +215,31 @@ public class Game extends Application{
         for (Alien lAlien: mAliens) {
             spaceCanvas.draw(lAlien);
         }
+    }
+
+    private void createBullet() {
+        //Create Bullet
+        Bullet bullet = Bullet.bullet1(
+                spaceship.getX() + spaceship.getWidth() / 2,
+                spaceship.getY() - spaceship.getHeight(),
+                1
+        );
+        //Define frame of size of bullet
+        bullet.getSprite().setHeight( bullet.getSprite().getHeight() / bullet.getSprite().getNbFrames() );
+        bullet.setWidth( (int) (bullet.getWidth() * 1.2) );
+        bullet.setHeight( (int) (bullet.getHeight() * 1.2) );
+        //Set width of height of bullet
+        bullet.setX( bullet.getX() - bullet.getWidth() / 2 );
+        bullet.setY( bullet.getY() + bullet.getHeight() / 2 );
+
+        //Add bullet to List
+        mBullets.add(bullet);
+
+        //Draw bullet
+        spaceCanvas.draw(bullet);
+    }
+
+    public static void main(String[] args) {
+        launch(args);
     }
 }

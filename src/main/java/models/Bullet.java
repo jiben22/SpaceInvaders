@@ -11,8 +11,8 @@ public class Bullet extends AnimatedComponent {
         super(x, y, sprite, width, height, xSpeed, ySpeed);
     }
 
-    public Bullet bullet1(int x, int y, int ySpeed) {
-        Sprite sprite = new Sprite(591, 331, 26, 63);
-        return new Bullet(x, y, sprite, sprite.getWidth() / 3, sprite.getHeight(), ySpeed);
+    public static Bullet bullet1(int x, int y, int ySpeed) {
+        Sprite sprite = new Sprite(591, 331, 26, 63, 1, 3);
+        return new Bullet(x, y, sprite, sprite.getWidth(), sprite.getHeight() / sprite.getNbFrames(), ySpeed);
     }
 }

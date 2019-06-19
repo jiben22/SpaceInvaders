@@ -13,7 +13,7 @@ public class Shield extends AnimatedComponent {
     }
 
     private Shield shield1(int x, int y) {
-        Sprite sprite = new Sprite(0, 334, 332, 36);
-        return new Shield(x, y, sprite, sprite.getWidth() / 4, sprite.getHeight());
+        Sprite sprite = new Sprite(0, 334, 332, 36, 1, 4);
+        return new Shield(x, y, sprite, sprite.getWidth() / sprite.getNbFrames(), sprite.getHeight());
     }
 }

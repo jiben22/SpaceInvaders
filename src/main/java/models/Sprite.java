@@ -12,11 +12,41 @@ public class Sprite {
     private int dy;
     private int width;
     private int height;
+    private int currentFrame;
+    private int nbFrames;
 
-    public Sprite(int dx, int dy, int width, int height) {
+    public Sprite(int dx, int dy, int width, int height, int currentFrame, int nbFrames) {
         this.dx = dx;
         this.dy = dy;
         this.width = width;
         this.height = height;
+        this.currentFrame = currentFrame;
+        this.nbFrames = nbFrames;
+    }
+
+    public void nextFrameWidth() {
+        if( currentFrame < nbFrames ) {
+            //Next frame
+            this.dx += this.width;
+            this.currentFrame += 1;
+        }
+        else {
+            //Reset to frame 1
+            this.dx -= this.width * (nbFrames - 1);
+            this.currentFrame = 1;
+        }
+    }
+
+    public void nextFrameHeight() {
+        if( currentFrame < nbFrames ) {
+            //Next frame
+            this.dy += this.height;
+            this.currentFrame += 1;
+        }
+        else {
+            //Reset to frame 1
+            this.dy -= this.height * (nbFrames - 1);
+            this.currentFrame = 1;
+        }
     }
 }

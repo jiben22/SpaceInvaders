@@ -12,8 +12,8 @@ public class Alien extends AnimatedComponent {
     }
 
     public static Alien alien1(int x, int y, int xSpeed) {
-        Sprite sprite = new Sprite(5, 222, 64, 18);
-        return new Alien(x, y, sprite, sprite.getWidth() / 2, sprite.getHeight(), xSpeed);
+        Sprite sprite = new Sprite(5, 222, 64, 18, 1, 2);
+        return new Alien(x, y, sprite, sprite.getWidth() / sprite.getNbFrames(), sprite.getHeight(), xSpeed);
     }
 
 }

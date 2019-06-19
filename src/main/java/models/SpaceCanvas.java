@@ -16,7 +16,7 @@ public class SpaceCanvas {
     private GraphicsContext graphicsContext;
 
     private SpaceCanvas() {
-        this.canvas = new Canvas(750, 800);
+        this.canvas = new Canvas(600, 700);
         this.graphicsContext = canvas.getGraphicsContext2D();
     }
 
