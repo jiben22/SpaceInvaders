@@ -12,7 +12,7 @@ public class Spaceship extends AnimatedComponent {
     }
 
     public static Spaceship spaceship1(int x, int y, int xSpeed) {
-        Sprite sprite = new Sprite(409, 311, 66, 19, 1, 2);
+        Sprite sprite = new Sprite(409, 311, 70, 19, 1, 2);
         return new Spaceship(x, y, sprite, sprite.getWidth() / sprite.getNbFrames(), sprite.getHeight(), xSpeed);
     }
 }

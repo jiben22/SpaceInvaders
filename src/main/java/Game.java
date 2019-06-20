@@ -2,13 +2,15 @@ import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.layout.Pane;
+import javafx.scene.image.Image;
+import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import models.Alien;
 import models.Bullet;
 import models.SpaceCanvas;
 import models.Spaceship;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,10 +26,19 @@ public class Game extends Application{
     @Override
     public void start(Stage theStage) {
         //Add SpaceCanvas to Parent
-
         root.getChildren().add(canvas);
+        //root.setStyle("-fx-background-color: black");
 
-        root.setStyle("-fx-background-color: black");
+        //Add background image
+        BackgroundImage backgroundImage= new BackgroundImage(
+                new Image("./images/wallpapers/galaxy1.jpg",
+                canvas.getWidth(),canvas.getHeight(),
+                        false,true),
+                BackgroundRepeat.REPEAT, BackgroundRepeat.NO_REPEAT,
+                BackgroundPosition.DEFAULT,
+                BackgroundSize.DEFAULT);
+        //Set background image to pane
+        root.setBackground(new Background(backgroundImage));
 
         //Create Scene
         Scene scene = new Scene(root);
@@ -40,19 +51,19 @@ public class Game extends Application{
         createSpaceship();
 
         //Add Aliens
-        int aliensPerRow = 1;
-        int aliensPerColumn = 1;
-        int alienXSpeed = 3;
+        int aliensPerRow = 5;
+        int aliensPerColumn = 5;
+        int alienXSpeed = 10;
         createAliens(aliensPerRow, aliensPerColumn, alienXSpeed);
 
-
-
         new AnimationTimer(){
+            private long lastUpdate = 0;
+            private boolean areAllowedMovingRight = true;
+
             @Override
-            public void handle(long l) {
+            public void handle(long now) {
 
                 /*
-<<<<<<< Updated upstream
                  * Les aliens se déplacent de gauche à droite et descendent lorsqu'il touchent le bord du canvas
                  *
                  /* Les bullets se déplacent de bas en haut et détruisent les aliens à leur contact */
@@ -73,7 +84,12 @@ public class Game extends Application{
                 *  - Alien
                 *
                 * */
-                moveAliens();
+                //
+                if (now - lastUpdate >= 28_000_000 * 10) {
+                    //Change direction of aliens if one alien exceed min/max of canvas
+                    areAllowedMovingRight = moveAliens(this.areAllowedMovingRight);
+                    lastUpdate = now ;
+                }
                 aliensHaveWon();
                 collisionHandler();
                  /* Le spaceship se délplace de gauche à droite
@@ -106,20 +122,33 @@ public class Game extends Application{
 
     }
 
-    private void moveAliens(){
-
-        for (Alien lAlien: mAliens) {
-
-            if(lAlien.getX() + lAlien.getWidth() >= spaceCanvas.getCanvas().getWidth()) {
-                for(Alien lAlien1: mAliens){
-                    lAlien1.moveRight();
-                }
+    private boolean moveAliens(boolean areAllowedMovingRight) {
+        for ( Alien lAlien: mAliens ) {
+            //Check if aliens do not exceed min/max width of canvas
+            if ( lAlien.getX() >= canvas.getWidth() - lAlien.getWidth() ) {
+                moveDownAliens();
+                areAllowedMovingRight = false;
+            }
+            else if ( lAlien.getX() <= lAlien.getWidth() ) {
+                moveDownAliens();
+                areAllowedMovingRight = true;
             }
 
+            //Next frame
+            lAlien.getSprite().nextFrameOffsetX();
 
+            //Move according to direction (left/right)
+            if( areAllowedMovingRight ) { lAlien.moveRight(); }
+            else { lAlien.moveLeft(); }
+        }
 
+        return areAllowedMovingRight;
+    }
 
-
+    private void moveDownAliens() {
+        for ( Alien lAlien: mAliens ) {
+            //Move down all aliens
+            lAlien.moveDown();
         }
     }
 
@@ -158,7 +187,7 @@ public class Game extends Application{
         for( int indexBullet = 0; indexBullet < mBullets.size(); indexBullet++ ) {
             Bullet bullet = mBullets.get(indexBullet);
             if( bullet.getY() > 0 ) {
-                bullet.getSprite().nextFrameHeight();
+                bullet.getSprite().nextFrameOffsetY();
                 bullet.moveUp();
             } else {
                 //Clear bullet
@@ -188,13 +217,13 @@ public class Game extends Application{
                 //TODO: verify spaceship is NOT NULL !
                 case LEFT:
                     if( spaceship.getX() >= 0  ) {
-                        spaceship.getSprite().nextFrameWidth();
+                        spaceship.getSprite().nextFrameOffsetX();
                         spaceship.moveLeft();
                     }
                     break;
                 case RIGHT:
-                    if( spaceship.getX() <= canvas.getWidth()  ) {
-                        spaceship.getSprite().nextFrameWidth();
+                    if( spaceship.getX() <= canvas.getWidth() - spaceship.getWidth()  ) {
+                        spaceship.getSprite().nextFrameOffsetX();
                         spaceship.moveRight();
                     }
                     break;
@@ -231,7 +260,7 @@ public class Game extends Application{
         for( int iColumn = 0; iColumn < aliensPerColumn; iColumn++ ) {
             for( int iRow = 0; iRow < aliensPerRow; iRow++ ) {
                 //Create new Alien
-                Alien alien = Alien.alien1(x, y, alienXSpeed);
+                Alien alien = Alien.alien2(x, y, alienXSpeed);
 
                 //Define frame of size of alien
                 alien.getSprite().setWidth( alien.getSprite().getWidth() / alien.getSprite().getNbFrames() );
