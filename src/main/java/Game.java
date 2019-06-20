@@ -53,7 +53,8 @@ public class Game extends Application{
         //Add Aliens
         int aliensPerRow = 5;
         int aliensPerColumn = 5;
-        int alienXSpeed = 10;
+        int alienXSpeed = 50;
+
         createAliens(aliensPerRow, aliensPerColumn, alienXSpeed);
 
         new AnimationTimer(){
@@ -110,12 +111,8 @@ public class Game extends Application{
                 aliensHaveWon();
                 alienWaveIsStillAlive();
 
-
-
-
             }
         }.start();
-
 
         keyboardEvents(scene);
         theStage.show();
@@ -153,34 +150,42 @@ public class Game extends Application{
     }
 
     private void collisionHandler(){
-        //Foreach bullet, check if there is a collision with an alien
+
         for( int indexBullet = 0; indexBullet < mBullets.size(); indexBullet++ ) {
             Bullet lBullet = mBullets.get(indexBullet);
-
-            for( int indexAlien = 0; indexAlien < mAliens.size(); indexAlien++ ) {
+            for( int indexAlien = mAliens.size()-1; indexAlien >= 0; indexAlien-- ) {
                 Alien lAlien = mAliens.get(indexAlien);
 
-                //There is a collision
-                //TODO: Fix detect collision
-                if( lBullet.getY() >= lAlien.getX() && lBullet.getY() <= (lAlien.getX() + lAlien.getHeight() + lAlien.getWidth()) ) {
-                    //Clear bullet and alien
-                    spaceCanvas.clear(lBullet);
-                    spaceCanvas.clear(lAlien);
+                if(lBullet.getX() >= lAlien.getX() - lAlien.getWidth()/2 && lBullet.getX() <= lAlien.getX() + lAlien.getWidth()){
+                    if(lBullet.getY() <= lAlien.getY()) {
 
-                    //Remove bullet and alien from List
-                    mBullets.remove(indexBullet);
-                    mAliens.remove(indexAlien);
-                    break;
+                        spaceCanvas.clear(lBullet);
+                        spaceCanvas.clear(lAlien);
+
+                        //Remove bullet and alien from List
+                        mBullets.remove(indexBullet);
+                        mAliens.remove(indexAlien);
+                        break;
+                    }
                 }
+
+
+
+
             }
         }
-        //if(collision) {
-        //on retire l'alien en question
-        //ajouter explosion
-        //retirer explosion
-        //retirer bullet
-        //mettre à jour le score
-        //}
+
+        for(Alien lAlien: mAliens){
+            if(lAlien.getY() + lAlien.getHeight() >= spaceship.getY()){
+                spaceCanvas.clear(lAlien);
+                mAliens.removeAll(lAlien);
+                spaceCanvas.clear(spaceship);
+                System.out.println("Game Over !");
+                break;
+            }
+        }
+        //Foreach bullet, check if there is a collision with an alien
+        
     }
 
     private void moveBullets() {
@@ -222,8 +227,10 @@ public class Game extends Application{
                     }
                     break;
                 case RIGHT:
+
                     if( spaceship.getX() <= canvas.getWidth() - spaceship.getWidth()  ) {
                         spaceship.getSprite().nextFrameOffsetX();
+
                         spaceship.moveRight();
                     }
                     break;
@@ -289,12 +296,12 @@ public class Game extends Application{
         Bullet bullet = Bullet.bullet1(
                 spaceship.getX() + spaceship.getWidth() / 2,
                 spaceship.getY() - spaceship.getHeight(),
-                1
+                4
         );
         //Define frame of size of bullet
         bullet.getSprite().setHeight( bullet.getSprite().getHeight() / bullet.getSprite().getNbFrames() );
-        bullet.setWidth( (int) (bullet.getWidth() * 1.2) );
-        bullet.setHeight( (int) (bullet.getHeight() * 1.2) );
+        bullet.setWidth( (int) (bullet.getWidth() * 0.7) );
+        bullet.setHeight( (int) (bullet.getHeight() * 0.7) );
         //Set width of height of bullet
         bullet.setX( bullet.getX() - bullet.getWidth() / 2 );
         bullet.setY( bullet.getY() + bullet.getHeight() / 2 );
