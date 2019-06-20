@@ -12,7 +12,7 @@ public abstract class AnimatedComponent {
     private int height;
     private int xSpeed;
     private int ySpeed;
-    private boolean canMove;
+    private boolean moveable;
 
     private SpaceCanvas spaceCanvas = SpaceCanvas.getInstance();
 

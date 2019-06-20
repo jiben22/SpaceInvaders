@@ -24,7 +24,9 @@ public class Game extends Application{
     @Override
     public void start(Stage theStage) {
         //Add SpaceCanvas to Parent
-        root.getChildren().add( canvas );
+
+        root.getChildren().add(canvas);
+
         root.setStyle("-fx-background-color: black");
 
         //Create Scene
@@ -43,17 +45,36 @@ public class Game extends Application{
         int alienXSpeed = 3;
         createAliens(aliensPerRow, aliensPerColumn, alienXSpeed);
 
+
+
         new AnimationTimer(){
             @Override
             public void handle(long l) {
 
                 /*
+<<<<<<< Updated upstream
                  * Les aliens se déplacent de gauche à droite et descendent lorsqu'il touchent le bord du canvas
                  *
                  /* Les bullets se déplacent de bas en haut et détruisent les aliens à leur contact */
                 moveBullets();
 
-                /* Check collision between Bullet and Alien */
+                /* Check collision between Bullet and Alien
+                * Les aliens se déplacent de gauche à droite et descendent lorsqu'il touchent le bord du canvas
+                *
+                * Les bullets se déplacent de bas en haut et détruisent les aliens à leur contact
+                *
+                * Le spaceship se délplace de gauche à droite
+                *
+                * Elements qui demandent une action de l'utilisateur :
+                *  - Spaceship
+                *  - Bullet
+                *
+                * Elements qui ne demandent pas d'action de l'utilisateur :
+                *  - Alien
+                *
+                * */
+                moveAliens();
+                aliensHaveWon();
                 collisionHandler();
                  /* Le spaceship se délplace de gauche à droite
                  *
@@ -83,6 +104,23 @@ public class Game extends Application{
         keyboardEvents(scene);
         theStage.show();
 
+    }
+
+    private void moveAliens(){
+
+        for (Alien lAlien: mAliens) {
+
+            if(lAlien.getX() + lAlien.getWidth() >= spaceCanvas.getCanvas().getWidth()) {
+                for(Alien lAlien1: mAliens){
+                    lAlien1.moveRight();
+                }
+            }
+
+
+
+
+
+        }
     }
 
     private void collisionHandler(){
@@ -242,4 +280,5 @@ public class Game extends Application{
     public static void main(String[] args) {
         launch(args);
     }
+
 }

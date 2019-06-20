@@ -5,7 +5,7 @@ import lombok.Setter;
 
 @Getter @Setter
 public class Alien extends AnimatedComponent {
-    private static final int ySpeed = 0;
+    private static final int ySpeed = 4;
 
     private Alien(int x, int y, Sprite sprite, int width, int height, int xSpeed) {
         super(x, y, sprite, width, height, xSpeed, ySpeed);
