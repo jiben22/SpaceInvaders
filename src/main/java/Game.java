@@ -5,12 +5,8 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
-import models.Alien;
-import models.Bullet;
-import models.SpaceCanvas;
-import models.Spaceship;
+import models.*;
 
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,13 +14,14 @@ public class Game extends Application{
     private Pane root = new Pane();
     private SpaceCanvas spaceCanvas = SpaceCanvas.getInstance();
     private Canvas canvas = spaceCanvas.getCanvas();
-
     private Spaceship spaceship;
     private List<Alien> mAliens = new ArrayList<>();
     private List<Bullet> mBullets = new ArrayList<>();
 
     @Override
     public void start(Stage theStage) {
+
+
         //Add SpaceCanvas to Parent
         root.getChildren().add(canvas);
         //root.setStyle("-fx-background-color: black");
@@ -58,7 +55,8 @@ public class Game extends Application{
         createAliens(aliensPerRow, aliensPerColumn, alienXSpeed);
 
         new AnimationTimer(){
-            private long lastUpdate = 0;
+            private long lastUpdateAliens = 0;
+            private long lastUpdateExplosion = 0;
             private boolean areAllowedMovingRight = true;
 
             @Override
@@ -86,13 +84,13 @@ public class Game extends Application{
                 *
                 * */
                 //
-                if (now - lastUpdate >= 28_000_000 * 10) {
+                if (now - lastUpdateAliens >= 28_000_000 * 10) {
                     //Change direction of aliens if one alien exceed min/max of canvas
                     areAllowedMovingRight = moveAliens(this.areAllowedMovingRight);
-                    lastUpdate = now ;
+                    lastUpdateAliens = now ;
                 }
-                aliensHaveWon();
-                collisionHandler();
+                bulletAlienCollisionHandler(now, lastUpdateExplosion);
+
                  /* Le spaceship se délplace de gauche à droite
                  *
                  * Elements qui demandent une action de l'utilisateur :
@@ -102,7 +100,7 @@ public class Game extends Application{
                  *
                  * Elements qui ne demandent pas d'action de l'utilisateur :
                  *  - Alien
-                 * */
+                 */
                 for (Alien lAlien: mAliens) {
                     spaceCanvas.clear(lAlien);
                     spaceCanvas.draw(lAlien);
@@ -149,7 +147,7 @@ public class Game extends Application{
         }
     }
 
-    private void collisionHandler(){
+    private void bulletAlienCollisionHandler(long now, long lastUpdateExplosion){
 
         for( int indexBullet = 0; indexBullet < mBullets.size(); indexBullet++ ) {
             Bullet lBullet = mBullets.get(indexBullet);
@@ -159,6 +157,7 @@ public class Game extends Application{
                 if(lBullet.getX() >= lAlien.getX() - lAlien.getWidth()/2 && lBullet.getX() <= lAlien.getX() + lAlien.getWidth()){
                     if(lBullet.getY() <= lAlien.getY()) {
 
+                        createExplosion(lAlien.getX() - lAlien.getWidth(), lAlien.getY() - lAlien.getHeight(), now, lastUpdateExplosion);
                         spaceCanvas.clear(lBullet);
                         spaceCanvas.clear(lAlien);
 
@@ -175,17 +174,9 @@ public class Game extends Application{
             }
         }
 
-        for(Alien lAlien: mAliens){
-            if(lAlien.getY() + lAlien.getHeight() >= spaceship.getY()){
-                spaceCanvas.clear(lAlien);
-                mAliens.removeAll(lAlien);
-                spaceCanvas.clear(spaceship);
-                System.out.println("Game Over !");
-                break;
-            }
-        }
+
         //Foreach bullet, check if there is a collision with an alien
-        
+
     }
 
     private void moveBullets() {
@@ -205,10 +196,17 @@ public class Game extends Application{
     }
 
     private void aliensHaveWon() {
-        // si les coordonnées aliens
+        for(Alien lAlien: mAliens){
+            if(lAlien.getY() + lAlien.getHeight() >= spaceship.getY()){
+                spaceCanvas.clear(lAlien);
+                spaceCanvas.clear(spaceship);
+                spaceCanvas.getCanvas().getGraphicsContext2D().fillText("Game Over !", 0, 0);
+                break;
+            }
+        }
     }
 
-    private void alienWaveIsStillAlive(){
+    private void alienWaveIsStillAlive() {
         // si tous les aliens sont morts, déploiement d'une nouvelle vague plus forte (vitesse++, musique++)
         //Le caractère infini du jeu va se faire ici
 
@@ -311,6 +309,24 @@ public class Game extends Application{
 
         //Draw bullet
         spaceCanvas.draw(bullet);
+    }
+
+    private void createExplosion(int x, int y, long now, long lastUpdateExplosion) {
+        Explosion explosion = Explosion.explosion1(x, y);
+        explosion.setWidth(explosion.getWidth() / 6);
+        explosion.setHeight(explosion.getHeight() / 6);
+
+
+        //TODO: draw and clear explosion sprite
+        for(int iTest=0; iTest <= 1500; iTest++) {
+            spaceCanvas.draw(explosion);
+        }
+
+        for(int iTest=0; iTest <= 3000; iTest++) {
+            spaceCanvas.clear(explosion);
+        }
+
+
     }
 
     public static void main(String[] args) {

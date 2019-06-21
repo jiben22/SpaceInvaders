@@ -6,8 +6,8 @@ import lombok.Setter;
 
 @Getter @Setter
 public class Sprite {
-    private final Image image = new Image("images/invader_transparency.png");
-    private final ImageView imageView = new ImageView(image);
+    private Image image;
+    private ImageView imageView;
     private int dx;
     private int dy;
     private int width;
@@ -22,6 +22,15 @@ public class Sprite {
         this.height = height;
         this.currentFrame = currentFrame;
         this.nbFrames = nbFrames;
+        this.image = new Image("images/invader_transparency.png");
+        this.imageView = new ImageView(image);
+    }
+
+    public Sprite(String imagePath, int width, int height) {
+        this.width = width;
+        this.height = height;
+        this.image = new Image(imagePath);
+        this.imageView = new ImageView(image);
     }
 
     public void nextFrameOffsetX() {
