@@ -1,7 +1,11 @@
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
+import javafx.collections.ObservableList;
+import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
@@ -10,12 +14,14 @@ import models.Bullet;
 import models.SpaceCanvas;
 import models.Spaceship;
 
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Game extends Application{
-    private Pane root = new Pane();
+    private StackPane root = new StackPane();
+    private Pane gameLayer = new Pane();
+    private Pane menuLayer = new Pane();
+
     private SpaceCanvas spaceCanvas = SpaceCanvas.getInstance();
     private Canvas canvas = spaceCanvas.getCanvas();
 
@@ -23,26 +29,20 @@ public class Game extends Application{
     private List<Alien> mAliens = new ArrayList<>();
     private List<Bullet> mBullets = new ArrayList<>();
 
+    private AnimationTimer animationTimer;
+
+    //TODO: set to keyboardEvents()
+    private boolean isShownMenuLayer = false;
+
     @Override
     public void start(Stage theStage) {
-        //Add SpaceCanvas to Parent
-        root.getChildren().add(canvas);
-        //root.setStyle("-fx-background-color: black");
-
-        //Add background image
-        BackgroundImage backgroundImage= new BackgroundImage(
-                new Image("./images/wallpapers/galaxy1.jpg",
-                canvas.getWidth(),canvas.getHeight(),
-                        false,true),
-                BackgroundRepeat.REPEAT, BackgroundRepeat.NO_REPEAT,
-                BackgroundPosition.DEFAULT,
-                BackgroundSize.DEFAULT);
-        //Set background image to pane
-        root.setBackground(new Background(backgroundImage));
+        //Add layers to stackPane
+        addGameLayer();
+        addMenuLayer();
+        changeTop();
 
         //Create Scene
         Scene scene = new Scene(root);
-
         theStage.setTitle("SpaceInvaders");
         theStage.setResizable(true);
         theStage.setScene(scene);
@@ -56,7 +56,7 @@ public class Game extends Application{
         int alienXSpeed = 10;
         createAliens(aliensPerRow, aliensPerColumn, alienXSpeed);
 
-        new AnimationTimer(){
+        animationTimer = new AnimationTimer(){
             private long lastUpdate = 0;
             private boolean areAllowedMovingRight = true;
 
@@ -109,13 +109,9 @@ public class Game extends Application{
 
                 aliensHaveWon();
                 alienWaveIsStillAlive();
-
-
-
-
             }
-        }.start();
-
+        };
+        animationTimer.start();
 
         keyboardEvents(scene);
         theStage.show();
@@ -210,7 +206,7 @@ public class Game extends Application{
 
     }
 
-    public void keyboardEvents(Scene theStage){
+    private void keyboardEvents(Scene theStage){
 
         theStage.setOnKeyPressed(e -> {
             switch (e.getCode()){
@@ -229,6 +225,20 @@ public class Game extends Application{
                     break;
                 case SPACE:
                     createBullet();
+                    break;
+                case ESCAPE:
+                    //If menu layer is not shown
+                    if (!isShownMenuLayer) {
+                        //Change layer and stop animationTimer
+                        changeTop();
+                        animationTimer.stop();
+                        isShownMenuLayer = true;
+                    } else {
+                        //Change layer and start animationTimer
+                        changeTop();
+                        animationTimer.start();
+                        isShownMenuLayer = false;
+                    }
                     break;
             }
         });
@@ -306,8 +316,79 @@ public class Game extends Application{
         spaceCanvas.draw(bullet);
     }
 
+    private void addGameLayer() {
+        //Add background image to game layer
+        BackgroundImage backgroundImage= new BackgroundImage(
+                new Image("./images/wallpapers/galaxy1.jpg",
+                        canvas.getWidth(),canvas.getHeight(),
+                        false,true),
+                BackgroundRepeat.REPEAT, BackgroundRepeat.NO_REPEAT,
+                BackgroundPosition.DEFAULT,
+                BackgroundSize.DEFAULT);
+        //Set background image to pane
+        gameLayer.setBackground(new Background(backgroundImage));
+        //Add canvas to root
+        gameLayer.getChildren().add(canvas);
+
+        //Add game layer to stackPane
+        root.getChildren().add(gameLayer);
+    }
+
+    private void addMenuLayer() {
+        VBox vBox = new VBox();
+        vBox.setAlignment(Pos.CENTER);
+        vBox.setSpacing(120);
+        vBox.setPrefSize(600, 600);
+
+        /* Create and add components to VBox */
+        //New Game
+        Button newGameButton = new Button("New game");
+        newGameButton.setOnAction(actionEvent -> {
+            System.out.println("New game !");
+        });
+        vBox.getChildren().add(newGameButton);
+
+        //Options
+        Button optionsButton = new Button("Options");
+        optionsButton.setOnAction(actionEvent -> {
+            System.out.println("Options");
+        });
+        vBox.getChildren().add(optionsButton);
+
+        //Exit
+        Button exitGame = new Button("Exit");
+        exitGame.setOnAction(actionEvent -> {
+            System.exit(0);
+        });
+        vBox.getChildren().add(exitGame);
+
+        //Add vbox to menu layer
+        menuLayer.getChildren().add(vBox);
+        //Set background color to menu layer
+        menuLayer.setStyle("-fx-background-color: black");
+
+        //Add menu layer to stackPane
+        root.getChildren().add(menuLayer);
+    }
+
+    private void changeTop() {
+        ObservableList<Node> childs = root.getChildren();
+
+        if (childs.size() > 1) {
+            //
+            Node topNode = childs.get(childs.size()-1);
+
+            // This node will be brought to the front
+            Node newTopNode = childs.get(childs.size()-2);
+
+            topNode.setVisible(false);
+            topNode.toBack();
+
+            newTopNode.setVisible(true);
+        }
+    }
+
     public static void main(String[] args) {
         launch(args);
     }
-
 }
