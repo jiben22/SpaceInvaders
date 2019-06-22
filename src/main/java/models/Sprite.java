@@ -6,7 +6,7 @@ import lombok.Setter;
 
 @Getter @Setter
 public class Sprite {
-    private final Image image = new Image("images/invader_transparency.png");
+    private final Image image = new Image("images/components/invader_transparency.png");
     private final ImageView imageView = new ImageView(image);
     private int dx;
     private int dy;

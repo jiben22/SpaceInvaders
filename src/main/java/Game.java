@@ -1,33 +1,32 @@
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.collections.ObservableList;
-import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.control.Button;
-import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import models.Alien;
 import models.Bullet;
 import models.SpaceCanvas;
 import models.Spaceship;
+import views.MainView;
+import views.MenuView;
+import views.OptionsView;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Game extends Application{
-    private StackPane root = new StackPane();
-    private Pane gameLayer = new Pane();
-    private Pane menuLayer = new Pane();
+    private StackPane root = MainView.getInstance().getRoot();
 
     private SpaceCanvas spaceCanvas = SpaceCanvas.getInstance();
     private Canvas canvas = spaceCanvas.getCanvas();
 
     private Spaceship spaceship;
-    private List<Alien> mAliens = new ArrayList<>();
-    private List<Bullet> mBullets = new ArrayList<>();
+    private List<Alien> mAliens;
+    private List<Bullet> mBullets;
 
     private AnimationTimer animationTimer;
 
@@ -36,16 +35,25 @@ public class Game extends Application{
 
     @Override
     public void start(Stage theStage) {
-        //Add layers to stackPane
-        addGameLayer();
-        addMenuLayer();
-        changeTop();
+        initMenu();
+        initOptions();
 
         //Create Scene
         Scene scene = new Scene(root);
+        scene.getStylesheets().add(getClass().getResource("./css/app.css").toExternalForm());
         theStage.setTitle("SpaceInvaders");
         theStage.setResizable(true);
         theStage.setScene(scene);
+        theStage.show();
+
+        keyboardEvents(scene);
+    }
+
+    private void loadGame() {
+        //Reset all components
+        spaceship = null;
+        mAliens = new ArrayList<>();
+        mBullets = new ArrayList<>();
 
         //Add Spaceship
         createSpaceship();
@@ -71,20 +79,20 @@ public class Game extends Application{
                 moveBullets();
 
                 /* Check collision between Bullet and Alien
-                * Les aliens se déplacent de gauche à droite et descendent lorsqu'il touchent le bord du canvas
-                *
-                * Les bullets se déplacent de bas en haut et détruisent les aliens à leur contact
-                *
-                * Le spaceship se délplace de gauche à droite
-                *
-                * Elements qui demandent une action de l'utilisateur :
-                *  - Spaceship
-                *  - Bullet
-                *
-                * Elements qui ne demandent pas d'action de l'utilisateur :
-                *  - Alien
-                *
-                * */
+                 * Les aliens se déplacent de gauche à droite et descendent lorsqu'il touchent le bord du canvas
+                 *
+                 * Les bullets se déplacent de bas en haut et détruisent les aliens à leur contact
+                 *
+                 * Le spaceship se délplace de gauche à droite
+                 *
+                 * Elements qui demandent une action de l'utilisateur :
+                 *  - Spaceship
+                 *  - Bullet
+                 *
+                 * Elements qui ne demandent pas d'action de l'utilisateur :
+                 *  - Alien
+                 *
+                 * */
                 //
                 if (now - lastUpdate >= 28_000_000 * 10) {
                     //Change direction of aliens if one alien exceed min/max of canvas
@@ -93,7 +101,7 @@ public class Game extends Application{
                 }
                 aliensHaveWon();
                 collisionHandler();
-                 /* Le spaceship se délplace de gauche à droite
+                /* Le spaceship se délplace de gauche à droite
                  *
                  * Elements qui demandent une action de l'utilisateur :
                  *  - Spaceship
@@ -113,10 +121,6 @@ public class Game extends Application{
             }
         };
         animationTimer.start();
-
-        keyboardEvents(scene);
-        theStage.show();
-
     }
 
     private boolean moveAliens(boolean areAllowedMovingRight) {
@@ -168,10 +172,6 @@ public class Game extends Application{
                         break;
                     }
                 }
-
-
-
-
             }
         }
 
@@ -186,7 +186,7 @@ public class Game extends Application{
             }
         }
         //Foreach bullet, check if there is a collision with an alien
-        
+
     }
 
     private void moveBullets() {
@@ -239,18 +239,7 @@ public class Game extends Application{
                     createBullet();
                     break;
                 case ESCAPE:
-                    //If menu layer is not shown
-                    if (!isShownMenuLayer) {
-                        //Change layer and stop animationTimer
-                        changeTop();
-                        animationTimer.stop();
-                        isShownMenuLayer = true;
-                    } else {
-                        //Change layer and start animationTimer
-                        changeTop();
-                        animationTimer.start();
-                        isShownMenuLayer = false;
-                    }
+                    pause();
                     break;
             }
         });
@@ -328,75 +317,52 @@ public class Game extends Application{
         spaceCanvas.draw(bullet);
     }
 
-    private void addGameLayer() {
-        //Add background image to game layer
-        BackgroundImage backgroundImage= new BackgroundImage(
-                new Image("./images/wallpapers/galaxy1.jpg",
-                        canvas.getWidth(),canvas.getHeight(),
-                        false,true),
-                BackgroundRepeat.REPEAT, BackgroundRepeat.NO_REPEAT,
-                BackgroundPosition.DEFAULT,
-                BackgroundSize.DEFAULT);
-        //Set background image to pane
-        gameLayer.setBackground(new Background(backgroundImage));
-        //Add canvas to root
-        gameLayer.getChildren().add(canvas);
-
-        //Add game layer to stackPane
-        root.getChildren().add(gameLayer);
-    }
-
-    private void addMenuLayer() {
-        VBox vBox = new VBox();
-        vBox.setAlignment(Pos.CENTER);
-        vBox.setSpacing(120);
-        vBox.setPrefSize(600, 600);
-
-        /* Create and add components to VBox */
-        //New Game
-        Button newGameButton = new Button("New game");
-        newGameButton.setOnAction(actionEvent -> {
-            System.out.println("New game !");
-        });
-        vBox.getChildren().add(newGameButton);
-
-        //Options
-        Button optionsButton = new Button("Options");
-        optionsButton.setOnAction(actionEvent -> {
-            System.out.println("Options");
-        });
-        vBox.getChildren().add(optionsButton);
-
-        //Exit
-        Button exitGame = new Button("Exit");
-        exitGame.setOnAction(actionEvent -> {
-            System.exit(0);
-        });
-        vBox.getChildren().add(exitGame);
-
-        //Add vbox to menu layer
-        menuLayer.getChildren().add(vBox);
-        //Set background color to menu layer
-        menuLayer.setStyle("-fx-background-color: black");
-
-        //Add menu layer to stackPane
-        root.getChildren().add(menuLayer);
-    }
-
-    private void changeTop() {
+    private void initMenu() {
+        MenuView menuView = MenuView.getInstance();
         ObservableList<Node> childs = root.getChildren();
 
-        if (childs.size() > 1) {
-            //
-            Node topNode = childs.get(childs.size()-1);
+        //New Game
+        menuView.getNewGameButton().setOnAction( actionEvent -> {
+            //Load game
+            loadGame();
 
-            // This node will be brought to the front
-            Node newTopNode = childs.get(childs.size()-2);
+            //Show game layer
+            childs.get(0).toFront();
+        });
 
-            topNode.setVisible(false);
-            topNode.toBack();
+        //Options
+        menuView.getOptionsButton().setOnAction( actionEvent -> {
+            //Show options layer
+            childs.get(1).toFront();
+        });
 
-            newTopNode.setVisible(true);
+        //Exit
+        menuView.getExitGame().setOnAction( actionEvent -> System.exit(0) );
+    }
+
+    private void initOptions() {
+        OptionsView optionsView = OptionsView.getInstance();
+    }
+
+    private void pause() {
+        ObservableList<Node> childs = root.getChildren();
+
+        //Check game is launching
+        if ( animationTimer != null ) {
+            //If menu layer is not shown
+            if ( !isShownMenuLayer ) {
+                //Show menu layer
+                childs.get(2).toFront();
+                //Stop animationTimer
+                animationTimer.stop();
+                isShownMenuLayer = true;
+            } else {
+                //Show game layer
+                childs.get(0).toFront();
+                //Start animationTimer
+                animationTimer.start();
+                isShownMenuLayer = false;
+            }
         }
     }
 
