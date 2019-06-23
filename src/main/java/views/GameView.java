@@ -1,5 +1,6 @@
 package views;
 
+import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
@@ -14,17 +15,19 @@ public class GameView {
         return ourInstance;
     }
 
+    private Scene gameScene;
     private Pane gameLayer = new Pane();
     private Canvas canvas = SpaceCanvas.getInstance().getCanvas();
 
     private GameView() {
         initGameLayer();
+        this.gameScene = new Scene( this.gameLayer );
     }
 
     private void initGameLayer() {
         //Add background image to game layer
         BackgroundImage backgroundImage= new BackgroundImage(
-                new Image("./images/wallpapers/galaxy1.jpg",
+                new Image("images/wallpapers/galaxy.jpg",
                         canvas.getWidth(),canvas.getHeight(),
                         false,true),
                 BackgroundRepeat.REPEAT, BackgroundRepeat.NO_REPEAT,

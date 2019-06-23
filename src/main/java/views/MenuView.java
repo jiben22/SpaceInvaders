@@ -1,6 +1,7 @@
 package views;
 
 import javafx.geometry.Pos;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -16,6 +17,7 @@ public class MenuView {
         return ourInstance;
     }
 
+    private Scene menuScene;
     private Pane menuLayer = new Pane();
     private Button newGameButton = new Button("New game");
     private Button optionsButton = new Button("Options");
@@ -23,6 +25,7 @@ public class MenuView {
 
     private MenuView() {
         initMenuLayer();
+        this.menuScene = new Scene( this.menuLayer );
     }
 
     private void initMenuLayer() {

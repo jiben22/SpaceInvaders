@@ -4,22 +4,24 @@ import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.layout.*;
+import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 import models.Alien;
 import models.Bullet;
 import models.SpaceCanvas;
 import models.Spaceship;
-import views.MainView;
+import views.GameView;
 import views.MenuView;
 import views.OptionsView;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Game extends Application{
-    private StackPane root = MainView.getInstance().getRoot();
+    private MenuView menuView = MenuView.getInstance();
+    private GameView gameView = GameView.getInstance();
+    private OptionsView optionsView = OptionsView.getInstance();
+    private Stage stage;
 
     private SpaceCanvas spaceCanvas = SpaceCanvas.getInstance();
     private Canvas canvas = spaceCanvas.getCanvas();
@@ -35,18 +37,26 @@ public class Game extends Application{
 
     @Override
     public void start(Stage theStage) {
+        this.stage = theStage;
+
         initMenu();
         initOptions();
 
+        //Add events for scenes
+        keyboardEvents( menuView.getMenuScene() );
+        keyboardEvents( gameView.getGameScene() );
+        keyboardEvents( optionsView.getOptionsScene() );
+        //Add stylesheets for scenes
+        menuView.getMenuScene().getStylesheets().add(getClass().getResource("./css/app.css").toExternalForm());
+        gameView.getGameScene().getStylesheets().add(getClass().getResource("./css/app.css").toExternalForm());
+        optionsView.getOptionsScene().getStylesheets().add(getClass().getResource("./css/app.css").toExternalForm());
+
         //Create Scene
-        Scene scene = new Scene(root);
-        scene.getStylesheets().add(getClass().getResource("./css/app.css").toExternalForm());
+        Scene scene = menuView.getMenuScene();
         theStage.setTitle("SpaceInvaders");
         theStage.setResizable(true);
         theStage.setScene(scene);
         theStage.show();
-
-        keyboardEvents(scene);
     }
 
     private void loadGame() {
@@ -319,7 +329,6 @@ public class Game extends Application{
 
     private void initMenu() {
         MenuView menuView = MenuView.getInstance();
-        ObservableList<Node> childs = root.getChildren();
 
         //New Game
         menuView.getNewGameButton().setOnAction( actionEvent -> {
@@ -327,13 +336,13 @@ public class Game extends Application{
             loadGame();
 
             //Show game layer
-            childs.get(0).toFront();
+            stage.setScene( gameView.getGameScene() );
         });
 
         //Options
         menuView.getOptionsButton().setOnAction( actionEvent -> {
             //Show options layer
-            childs.get(1).toFront();
+            stage.setScene( optionsView.getOptionsScene() );
         });
 
         //Exit
@@ -342,23 +351,42 @@ public class Game extends Application{
 
     private void initOptions() {
         OptionsView optionsView = OptionsView.getInstance();
+
+        //Left
+        optionsView.getLeftButton().setOnAction( actionEvent -> {
+        });
+
+        //Right
+        optionsView.getRightButton().setOnAction( actionEvent -> {
+            int indexWallpaper = optionsView.getIndexWallpaper();
+            List<ImageView> imageViews = optionsView.getImageViewsWallpapers();
+
+            //Check if there are wallpapers left
+            if ( indexWallpaper <= imageViews.size() ) {
+                //Increment index of wallpaper
+                optionsView.setIndexWallpaper( indexWallpaper++ );
+                //Change wallpaper
+                ImageView imageView = optionsView.getImageViewsWallpapers().get( optionsView.getIndexWallpaper() );
+                optionsView.setImageViewWallpaper( imageView );
+            }
+        });
     }
 
     private void pause() {
-        ObservableList<Node> childs = root.getChildren();
 
         //Check game is launching
         if ( animationTimer != null ) {
+
             //If menu layer is not shown
             if ( !isShownMenuLayer ) {
                 //Show menu layer
-                childs.get(2).toFront();
+                stage.setScene( menuView.getMenuScene() );
                 //Stop animationTimer
                 animationTimer.stop();
                 isShownMenuLayer = true;
             } else {
                 //Show game layer
-                childs.get(0).toFront();
+                stage.setScene( gameView.getGameScene() );
                 //Start animationTimer
                 animationTimer.start();
                 isShownMenuLayer = false;

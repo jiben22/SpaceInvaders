@@ -1,16 +1,35 @@
 @import url('https://fonts.googleapis.com/css?family=Press+Start+2P&display=swap');
 
-.button {
+.label {
+    -fx-font-family: 'Press Start 2P', cursive;
+    -fx-text-fill: white;
+    -fx-font-size: 20;
+}
+
+.button, .toggle-button {
     -fx-font-family: 'Press Start 2P', cursive;
     -fx-background-color: black;
     -fx-text-fill: white;
-    -fx-font-size: 25;
 
     -fx-border-color: white;
     -fx-border-style: solid;
+}
+
+.button {
+    -fx-font-size: 25;
     -fx-border-width: 4;
+}
+
+.toggle-button {
+    -fx-font-size: 15;
+    -fx-border-width: 2;
 }
 
 .button:hover {
     -fx-font-size: 30;
+}
+
+.toggle-button:focused {
+    -fx-background-color: white;
+    -fx-text-fill: black;
 }
