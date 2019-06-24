@@ -14,6 +14,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import lombok.Getter;
 import lombok.Setter;
+import models.Alien;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,13 +33,25 @@ public class OptionsView {
     private  ImageView imageViewWallpaper;
     private int indexWallpaper = 0;
 
+    private List<ImageView> imageViewsAliens = new ArrayList<>();
+    private  ImageView imageViewAlien;
+    private int indexAlien = 0;
+
     private Label backgroundLabel = new Label("Background");
-    private Button leftButton = new Button("<");
-    private Button rightButton = new Button(">");
+    private Button leftBackgroundButton = new Button("<");
+    private Button rightBackgroundButton = new Button(">");
+
     private Label levelLabel = new Label("Level");
     private ToggleButton easyButton = new ToggleButton("Easy");
     private ToggleButton mediumButton = new ToggleButton("Medium");
     private ToggleButton hardButton = new ToggleButton("Hard");
+
+    private Label alienLabel = new Label("Alien");
+    private Button leftAlienButton = new Button("<");
+    private Button rightAlienButton = new Button(">");
+
+    private Button cancelButton = new Button("Cancel");
+    private Button validateButton = new Button("Validate");
 
     private OptionsView() {
         initOptionsLayer();
@@ -48,17 +61,23 @@ public class OptionsView {
     private void initOptionsLayer() {
         VBox vBox = new VBox();
         vBox.setAlignment(Pos.CENTER);
-        vBox.setSpacing(200);
+        vBox.setSpacing(50);
         vBox.setPrefSize(600, 600);
 
         BorderPane backgroundBorderPane = createBackgroundBorderPane();
         HBox levelHBox = createLevelHBox();
+        //BorderPane alienBorderPane = createAliensBorderPane();
+        HBox cancelValidationHBox = createCancelValidateHBox();
 
-        //Add all components and boxes to options layer
-        optionsLayer.getChildren().addAll(
+        //Add all components to vBox
+        vBox.getChildren().addAll(
                 backgroundBorderPane,
-                levelHBox
+                levelHBox,
+                cancelValidationHBox
         );
+
+        //Add vBox to options layer
+        optionsLayer.getChildren().add(vBox);
         //Set background color to menu layer
         optionsLayer.setStyle("-fx-background-color: black");
     }
@@ -85,14 +104,14 @@ public class OptionsView {
         imageViewWallpaper = imageViewsWallpapers.get( indexWallpaper );
         //Add components to VBox
         borderPane.setTop( backgroundLabel );
-        borderPane.setRight( rightButton );
-        borderPane.setLeft( leftButton );
+        borderPane.setRight( rightBackgroundButton );
+        borderPane.setLeft( leftBackgroundButton );
         borderPane.setCenter( imageViewWallpaper );
 
         //Alignment
         BorderPane.setAlignment( backgroundLabel, Pos.CENTER );
-        BorderPane.setAlignment( rightButton, Pos.CENTER );
-        BorderPane.setAlignment( leftButton, Pos.CENTER );
+        BorderPane.setAlignment( rightBackgroundButton, Pos.CENTER );
+        BorderPane.setAlignment( leftBackgroundButton, Pos.CENTER );
         BorderPane.setAlignment( imageViewWallpaper, Pos.CENTER );
         //Margin/Padding
         BorderPane.setMargin( imageViewWallpaper, new Insets(50,20,0,20) );
@@ -105,14 +124,72 @@ public class OptionsView {
         HBox hBox = new HBox();
         hBox.setAlignment(Pos.CENTER);
         hBox.setSpacing(40);
-        hBox.setPrefSize(600, 700);
+        hBox.setPrefSize(600, 150);
 
-        //Add components to VBox
+        //Select easy button by default
+        easyButton.setSelected(true);
+
+        //Add components to HBox
         hBox.getChildren().addAll(
                 levelLabel,
                 easyButton,
                 mediumButton,
                 hardButton
+        );
+
+        return hBox;
+    }
+
+    /*private BorderPane  createAliensBorderPane() {
+        BorderPane borderPane = new BorderPane();
+
+        //Create all aliens
+        Alien alien1 = Alien.alien1(0, 0, 0);
+        Alien alien2 = Alien.alien2(0, 0, 0);
+
+        ImageView imageView1 = alien1.getSprite().getImageView();
+        imageView1.setFitHeight(200);
+        imageView1.setFitWidth(200);
+        ImageView imageView2 = alien2.getSprite().getImageView();
+        imageView2.setFitHeight(200);
+        imageView2.setFitWidth(200);
+
+        //Add aliens choice
+        imageViewsAliens.add(imageView1);
+        imageViewsAliens.add(imageView2);
+
+        imageViewAlien = imageViewsAliens.get( indexAlien );
+        //Add components to VBox
+        borderPane.setTop( alienLabel );
+        borderPane.setRight( rightAlienButton );
+        borderPane.setLeft( leftAlienButton );
+        borderPane.setCenter( imageViewAlien );
+
+        //Alignment
+        BorderPane.setAlignment( alienLabel, Pos.CENTER );
+        BorderPane.setAlignment( rightAlienButton, Pos.CENTER );
+        BorderPane.setAlignment( leftAlienButton, Pos.CENTER );
+        BorderPane.setAlignment( imageViewAlien, Pos.CENTER );
+        //Margin/Padding
+        BorderPane.setMargin( imageViewAlien, new Insets(50,20,0,20) );
+        borderPane.setPadding( new Insets(10,50,0,50) );
+
+        return borderPane;
+    }*/
+
+    private HBox createCancelValidateHBox() {
+        HBox hBox = new HBox();
+        hBox.setAlignment(Pos.CENTER);
+        hBox.setSpacing(110);
+        hBox.setPrefSize(600, 100);
+
+        cancelButton.setId("cancelButton");
+        validateButton.setId("validateButton");
+
+        //Add components to VBox
+        hBox.getChildren().addAll(
+                cancelButton,
+                validateButton
         );
 
         return hBox;

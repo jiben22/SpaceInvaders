@@ -30,8 +30,8 @@ public class GameView {
                 new Image("images/wallpapers/galaxy.jpg",
                         canvas.getWidth(),canvas.getHeight(),
                         false,true),
-                BackgroundRepeat.REPEAT, BackgroundRepeat.NO_REPEAT,
-                BackgroundPosition.DEFAULT,
+                BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT,
+                BackgroundPosition.CENTER,
                 BackgroundSize.DEFAULT);
         //Set background image to pane
         gameLayer.setBackground(new Background(backgroundImage));
