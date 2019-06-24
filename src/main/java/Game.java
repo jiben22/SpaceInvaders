@@ -1,10 +1,10 @@
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
-import javafx.collections.ObservableList;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import models.Alien;
 import models.Bullet;
@@ -253,7 +253,6 @@ public class Game extends Application{
                     break;
             }
         });
-
     }
 
     private void createSpaceship() {
@@ -352,24 +351,107 @@ public class Game extends Application{
     private void initOptions() {
         OptionsView optionsView = OptionsView.getInstance();
 
-        //Left
-        optionsView.getLeftButton().setOnAction( actionEvent -> {
-        });
-
-        //Right
-        optionsView.getRightButton().setOnAction( actionEvent -> {
+        //Left Background
+        optionsView.getLeftBackgroundButton().setOnAction( actionEvent -> {
             int indexWallpaper = optionsView.getIndexWallpaper();
             List<ImageView> imageViews = optionsView.getImageViewsWallpapers();
 
             //Check if there are wallpapers left
-            if ( indexWallpaper <= imageViews.size() ) {
-                //Increment index of wallpaper
-                optionsView.setIndexWallpaper( indexWallpaper++ );
-                //Change wallpaper
-                ImageView imageView = optionsView.getImageViewsWallpapers().get( optionsView.getIndexWallpaper() );
-                optionsView.setImageViewWallpaper( imageView );
-            }
+            if ( indexWallpaper > 0 ) { changeImageViewBackground( indexWallpaper-1 ); }
         });
+
+        //Right background
+        optionsView.getRightBackgroundButton().setOnAction( actionEvent -> {
+            int indexWallpaper = optionsView.getIndexWallpaper();
+            List<ImageView> imageViews = optionsView.getImageViewsWallpapers();
+
+            //Check if there are wallpapers left
+            if ( indexWallpaper < imageViews.size()-1 ) { changeImageViewBackground( indexWallpaper+1 ); }
+        });
+
+        //Left Alien
+        optionsView.getLeftAlienButton().setOnAction( actionEvent -> {
+            int indexAlien = optionsView.getIndexAlien();
+            List<ImageView> imageViews = optionsView.getImageViewsAliens();
+
+            //Check if there are aliens left
+            if ( indexAlien > 0 ) { changeImageViewAlien( indexAlien-1 ); }
+        });
+
+        //Right background
+        optionsView.getRightAlienButton().setOnAction( actionEvent -> {
+            int indexAlien = optionsView.getIndexAlien();
+            List<ImageView> imageViews = optionsView.getImageViewsAliens();
+
+            //Check if there are aliens left
+            if ( indexAlien > 0 ) { changeImageViewAlien( indexAlien+1 ); }
+        });
+
+        optionsView.getCancelButton().setOnAction( actionEvent -> {
+            //Show menu layer
+            stage.setScene( menuView.getMenuScene() );
+        });
+
+        optionsView.getValidateButton().setOnAction( actionEvent -> {
+            updateParametersGame();
+
+            //Load game and show game layer
+            loadGame();
+            stage.setScene( gameView.getGameScene() );
+        });
+    }
+
+    private void updateParametersGame() {
+        /* Get all options and apply to game */
+        //Get wallpaper
+        ImageView imageViewWallpaper = optionsView.getImageViewWallpaper();
+        imageViewWallpaper.setFitWidth( gameView.getCanvas().getWidth() );
+        imageViewWallpaper.setFitHeight( gameView.getCanvas().getHeight() );
+        //Get level
+        String level = optionsView.getLevelLabel().getText();
+
+        switch (level) {
+            case "Easy":
+                System.out.println("Easy");
+                break;
+            case "Medium":
+                System.out.println("Medium");
+                break;
+            case "Hard":
+                System.out.println("Hard");
+                break;
+        }
+
+        //Add background image to game layer
+        BackgroundImage backgroundImage = new BackgroundImage(
+                new Image(
+                        imageViewWallpaper.getImage().getUrl(),
+                        gameView.getCanvas().getWidth(),
+                        gameView.getCanvas().getHeight(),
+                        false,
+                        true
+                ),
+                BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT,
+                BackgroundPosition.CENTER,
+                BackgroundSize.DEFAULT);
+        //Set background image to pane
+        gameView.getGameLayer().setBackground( new Background(backgroundImage) );
+    }
+
+    private void changeImageViewBackground(int indexWallpaper) {
+        //Increment index of wallpaper
+        optionsView.setIndexWallpaper( indexWallpaper );
+        //Change wallpaper
+        ImageView imageView = optionsView.getImageViewsWallpapers().get( optionsView.getIndexWallpaper() );
+        optionsView.getImageViewWallpaper().setImage( imageView.getImage() );
+    }
+
+    private void changeImageViewAlien(int indexAlien) {
+        //Increment index of alien
+        optionsView.setIndexAlien( indexAlien );
+        //Change alien
+        ImageView imageView = optionsView.getImageViewsAliens().get( optionsView.getIndexWallpaper() );
+        optionsView.getImageViewAlien().setImage( imageView.getImage() );
     }
 
     private void pause() {
