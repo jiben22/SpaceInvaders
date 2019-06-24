@@ -35,6 +35,6 @@
 }
 
 #gameover {
-    -fx-text-fill: #ff2e2a;
+    -fx-text-fill: red;
     -fx-font-size: 40;
 }
