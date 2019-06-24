@@ -22,7 +22,7 @@ public class Sprite {
         this.height = height;
         this.currentFrame = currentFrame;
         this.nbFrames = nbFrames;
-        this.image = new Image("images/invader_transparency.png");
+        this.image = new Image("images/components/invader_transparency.png");
         this.imageView = new ImageView(image);
     }
 

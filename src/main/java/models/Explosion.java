@@ -14,9 +14,7 @@ public class Explosion extends AnimatedComponent {
     }
 
     public static Explosion explosion1(int x, int y) {
-        Sprite sprite = new Sprite("images/explosion.png", 512, 512);
+        Sprite sprite = new Sprite("images/components/explosion.png", 512, 512);
         return new Explosion(x, y, sprite, sprite.getWidth(), sprite.getHeight());
     }
-
-
 }

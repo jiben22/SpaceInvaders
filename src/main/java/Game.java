@@ -2,47 +2,68 @@ import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.image.Image;
-import javafx.scene.layout.*;
+import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 import models.*;
+import views.GameOverView;
+import views.GameView;
+import views.MenuView;
+import views.OptionsView;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Game extends Application{
-    private Pane root = new Pane();
+    private MenuView menuView = MenuView.getInstance();
+    private GameView gameView = GameView.getInstance();
+    private OptionsView optionsView = OptionsView.getInstance();
+    private GameOverView gameOverView = GameOverView.getInstance();
+    private Stage stage;
+
     private SpaceCanvas spaceCanvas = SpaceCanvas.getInstance();
     private Canvas canvas = spaceCanvas.getCanvas();
+
     private Spaceship spaceship;
-    private List<Alien> mAliens = new ArrayList<>();
-    private List<Bullet> mBullets = new ArrayList<>();
+    private List<Alien> mAliens;
+    private List<Bullet> mBullets;
+
+    private AnimationTimer animationTimer;
+
+    //TODO: set to keyboardEvents()
+    private boolean isShownMenuLayer = false;
 
     @Override
     public void start(Stage theStage) {
 
+        this.stage = theStage;
 
-        //Add SpaceCanvas to Parent
-        root.getChildren().add(canvas);
-        //root.setStyle("-fx-background-color: black");
+        initMenu();
+        initOptions();
 
-        //Add background image
-        BackgroundImage backgroundImage= new BackgroundImage(
-                new Image("./images/wallpapers/galaxy1.jpg",
-                canvas.getWidth(),canvas.getHeight(),
-                        false,true),
-                BackgroundRepeat.REPEAT, BackgroundRepeat.NO_REPEAT,
-                BackgroundPosition.DEFAULT,
-                BackgroundSize.DEFAULT);
-        //Set background image to pane
-        root.setBackground(new Background(backgroundImage));
+
+        //Add events for scenes
+        keyboardEvents( menuView.getMenuScene() );
+        keyboardEvents( gameView.getGameScene() );
+        keyboardEvents( optionsView.getOptionsScene() );
+        //Add stylesheets for scenes
+        menuView.getMenuScene().getStylesheets().add(getClass().getResource("./css/app.css").toExternalForm());
+        gameView.getGameScene().getStylesheets().add(getClass().getResource("./css/app.css").toExternalForm());
+        optionsView.getOptionsScene().getStylesheets().add(getClass().getResource("./css/app.css").toExternalForm());
+        gameOverView.getGameOverScene().getStylesheets().add(getClass().getResource("./css/app.css").toExternalForm());
 
         //Create Scene
-        Scene scene = new Scene(root);
-
+        Scene scene = menuView.getMenuScene();
         theStage.setTitle("SpaceInvaders");
         theStage.setResizable(true);
         theStage.setScene(scene);
+        theStage.show();
+    }
+
+    private void loadGame() {
+        //Reset all components
+        this.spaceship = null;
+        this.mAliens = new ArrayList<>();
+        this.mBullets = new ArrayList<>();
 
         //Add Spaceship
         createSpaceship();
@@ -50,11 +71,12 @@ public class Game extends Application{
         //Add Aliens
         int aliensPerRow = 5;
         int aliensPerColumn = 5;
-        int alienXSpeed = 50;
+        int alienXSpeed = 300;
 
         createAliens(aliensPerRow, aliensPerColumn, alienXSpeed);
 
-        new AnimationTimer(){
+
+        this.animationTimer = new AnimationTimer() {
             private long lastUpdateAliens = 0;
             private long lastUpdateExplosion = 0;
             private boolean areAllowedMovingRight = true;
@@ -69,20 +91,20 @@ public class Game extends Application{
                 moveBullets();
 
                 /* Check collision between Bullet and Alien
-                * Les aliens se déplacent de gauche à droite et descendent lorsqu'il touchent le bord du canvas
-                *
-                * Les bullets se déplacent de bas en haut et détruisent les aliens à leur contact
-                *
-                * Le spaceship se délplace de gauche à droite
-                *
-                * Elements qui demandent une action de l'utilisateur :
-                *  - Spaceship
-                *  - Bullet
-                *
-                * Elements qui ne demandent pas d'action de l'utilisateur :
-                *  - Alien
-                *
-                * */
+                 * Les aliens se déplacent de gauche à droite et descendent lorsqu'il touchent le bord du canvas
+                 *
+                 * Les bullets se déplacent de bas en haut et détruisent les aliens à leur contact
+                 *
+                 * Le spaceship se délplace de gauche à droite
+                 *
+                 * Elements qui demandent une action de l'utilisateur :
+                 *  - Spaceship
+                 *  - Bullet
+                 *
+                 * Elements qui ne demandent pas d'action de l'utilisateur :
+                 *  - Alien
+                 *
+                 * */
                 //
                 if (now - lastUpdateAliens >= 28_000_000 * 10) {
                     //Change direction of aliens if one alien exceed min/max of canvas
@@ -108,12 +130,9 @@ public class Game extends Application{
 
                 aliensHaveWon();
                 alienWaveIsStillAlive();
-
             }
-        }.start();
-
-        keyboardEvents(scene);
-        theStage.show();
+        };
+        animationTimer.start();
 
     }
 
@@ -167,13 +186,19 @@ public class Game extends Application{
                         break;
                     }
                 }
-
-
-
-
             }
         }
 
+        for(Alien lAlien: mAliens){
+            if(lAlien.getY() + lAlien.getHeight() >= spaceship.getY()){
+                spaceCanvas.clear(lAlien);
+                //TODO: WHAT ?
+                //mAliens.removeAll(lAlien);
+                spaceCanvas.clear(spaceship);
+                System.out.println("Game Over !");
+                break;
+            }
+        }
 
         //Foreach bullet, check if there is a collision with an alien
 
@@ -200,8 +225,8 @@ public class Game extends Application{
             if(lAlien.getY() + lAlien.getHeight() >= spaceship.getY()){
                 spaceCanvas.clear(lAlien);
                 spaceCanvas.clear(spaceship);
-                spaceCanvas.getCanvas().getGraphicsContext2D().fillText("Game Over !", 0, 0);
-                break;
+                animationTimer.stop();
+                stage.setScene( gameOverView.getGameOverScene() );
             }
         }
     }
@@ -213,7 +238,7 @@ public class Game extends Application{
 
     }
 
-    public void keyboardEvents(Scene theStage){
+    private void keyboardEvents(Scene theStage){
 
         theStage.setOnKeyPressed(e -> {
             switch (e.getCode()){
@@ -234,6 +259,9 @@ public class Game extends Application{
                     break;
                 case SPACE:
                     createBullet();
+                    break;
+                case ESCAPE:
+                    pause();
                     break;
             }
         });
@@ -256,9 +284,9 @@ public class Game extends Application{
 
     private void createAliens(int aliensPerRow, int aliensPerColumn, int alienXSpeed) {
         //Init x, y positions on canvas
-        int originX = 40;
+        int originX = 0;
         int x = originX;
-        int y = 40;
+        int y = 0;
 
         int alienHeight = 0;
 
@@ -276,7 +304,9 @@ public class Game extends Application{
                 mAliens.add(alien);
                 //Increment x position with alien width
                 x += alien.getWidth() + 10;
-                if( alienHeight < alien.getHeight() ) { alienHeight = alien.getHeight(); }
+                if( alienHeight < alien.getHeight() ) {
+                    alienHeight = alien.getHeight();
+                }
             }
             //Increment y position with alien height and reset x position
             x = originX;
@@ -311,6 +341,7 @@ public class Game extends Application{
         spaceCanvas.draw(bullet);
     }
 
+
     private void createExplosion(int x, int y, long now, long lastUpdateExplosion) {
         Explosion explosion = Explosion.explosion1(x, y);
         explosion.setWidth(explosion.getWidth() / 6);
@@ -318,19 +349,84 @@ public class Game extends Application{
 
 
         //TODO: draw and clear explosion sprite
-        for(int iTest=0; iTest <= 1500; iTest++) {
+        for (int iTest = 0; iTest <= 1500; iTest++) {
             spaceCanvas.draw(explosion);
         }
 
-        for(int iTest=0; iTest <= 3000; iTest++) {
-            spaceCanvas.clear(explosion);
+    }
+
+    private void initMenu() {
+
+        MenuView menuView = MenuView.getInstance();
+
+        //New Game
+        menuView.getNewGameButton().setOnAction( actionEvent -> {
+            //Load game
+            loadGame();
+
+            //Show game layer
+            stage.setScene( gameView.getGameScene() );
+        });
+
+        //Options
+        menuView.getOptionsButton().setOnAction( actionEvent -> {
+            //Show options layer
+            stage.setScene( optionsView.getOptionsScene() );
+        });
+
+        //Exit
+        menuView.getExitGame().setOnAction( actionEvent -> System.exit(0) );
+    }
+
+    private void initOptions() {
+        OptionsView optionsView = OptionsView.getInstance();
+
+        //Left
+        optionsView.getLeftButton().setOnAction( actionEvent -> {
+        });
+
+        //Right
+        optionsView.getRightButton().setOnAction( actionEvent -> {
+            int indexWallpaper = optionsView.getIndexWallpaper();
+            List<ImageView> imageViews = optionsView.getImageViewsWallpapers();
+
+            //Check if there are wallpapers left
+            if ( indexWallpaper <= imageViews.size() ) {
+                //Increment index of wallpaper
+                optionsView.setIndexWallpaper( indexWallpaper++ );
+                //Change wallpaper
+                ImageView imageView = optionsView.getImageViewsWallpapers().get( optionsView.getIndexWallpaper() );
+                optionsView.setImageViewWallpaper( imageView );
+            }
+        });
+    }
+
+
+
+    private void pause() {
+
+
+        //Check game is launching
+        if ( animationTimer != null ) {
+
+            //If menu layer is not shown
+            if ( !isShownMenuLayer ) {
+                //Show menu layer
+                stage.setScene( menuView.getMenuScene() );
+                //Stop animationTimer
+                animationTimer.stop();
+                isShownMenuLayer = true;
+            } else {
+                //Show game layer
+                stage.setScene( gameView.getGameScene() );
+                //Start animationTimer
+                animationTimer.start();
+                isShownMenuLayer = false;
+            }
         }
-
-
     }
 
     public static void main(String[] args) {
         launch(args);
     }
-
 }
