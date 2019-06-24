@@ -126,6 +126,9 @@ public class OptionsView {
         hBox.setSpacing(40);
         hBox.setPrefSize(600, 150);
 
+        //Select easy button by default
+        easyButton.setSelected(true);
+
         //Add components to HBox
         hBox.getChildren().addAll(
                 levelLabel,

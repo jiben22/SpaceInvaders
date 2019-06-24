@@ -32,6 +32,10 @@ public class Game extends Application{
 
     private AnimationTimer animationTimer;
 
+    private int aliensPerRow = 5;
+    private int aliensPerColumn = 5;
+    private int alienXSpeed = 50;
+
     //TODO: set to keyboardEvents()
     private boolean isShownMenuLayer = false;
 
@@ -69,10 +73,6 @@ public class Game extends Application{
         createSpaceship();
 
         //Add Aliens
-        int aliensPerRow = 5;
-        int aliensPerColumn = 5;
-        int alienXSpeed = 50;
-
         createAliens(aliensPerRow, aliensPerColumn, alienXSpeed);
 
         animationTimer = new AnimationTimer(){
@@ -230,23 +230,23 @@ public class Game extends Application{
 
         theStage.setOnKeyPressed(e -> {
             switch (e.getCode()){
-                //TODO: verify spaceship is NOT NULL !
                 case LEFT:
-                    if( spaceship.getX() >= 0  ) {
+                    if( spaceship != null && spaceship.getX() >= 0  ) {
                         spaceship.getSprite().nextFrameOffsetX();
                         spaceship.moveLeft();
                     }
                     break;
                 case RIGHT:
-
-                    if( spaceship.getX() <= canvas.getWidth() - spaceship.getWidth()  ) {
+                    if( spaceship != null && spaceship.getX() <= canvas.getWidth() - spaceship.getWidth()  ) {
                         spaceship.getSprite().nextFrameOffsetX();
 
                         spaceship.moveRight();
                     }
                     break;
                 case SPACE:
-                    createBullet();
+                    if ( spaceship != null ) {
+                        createBullet();
+                    }
                     break;
                 case ESCAPE:
                     pause();
@@ -407,18 +407,29 @@ public class Game extends Application{
         ImageView imageViewWallpaper = optionsView.getImageViewWallpaper();
         imageViewWallpaper.setFitWidth( gameView.getCanvas().getWidth() );
         imageViewWallpaper.setFitHeight( gameView.getCanvas().getHeight() );
+
         //Get level
-        String level = optionsView.getLevelLabel().getText();
+        String level = optionsView.getEasyButton().getText();
+        if ( optionsView.getEasyButton().isSelected() ) { level = optionsView.getEasyButton().getText(); }
+        else if ( optionsView.getMediumButton().isSelected() ) { level = optionsView.getMediumButton().getText(); }
+        else if ( optionsView.getHardButton().isSelected() ) { level = optionsView.getHardButton().getText(); }
+        System.out.println(level);
 
         switch (level) {
             case "Easy":
-                System.out.println("Easy");
+                this.aliensPerRow = 5;
+                this.aliensPerColumn = 5;
+                this.alienXSpeed = 50;
                 break;
             case "Medium":
-                System.out.println("Medium");
+                this.aliensPerRow = 5;
+                this.aliensPerColumn = 5;
+                this.alienXSpeed = 60;
                 break;
             case "Hard":
-                System.out.println("Hard");
+                this.aliensPerRow = 5;
+                this.aliensPerColumn = 6;
+                this.alienXSpeed = 60;
                 break;
         }
 
