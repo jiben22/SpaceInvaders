@@ -67,6 +67,21 @@ public class Game extends Application{
     }
 
     private void loadGame() {
+        //clear canvas
+        if(mAliens != null){
+            for(Alien alien: mAliens){
+                spaceCanvas.clear(alien);
+            }
+        }
+        if(mBullets != null){
+            for(Bullet bullet: mBullets){
+                spaceCanvas.clear(bullet);
+            }
+        }
+        if(spaceship != null) {
+            spaceCanvas.clear(spaceship);
+        }
+
         //Reset all components
         this.spaceship = null;
         this.mAliens = new ArrayList<>();
@@ -393,13 +408,6 @@ public class Game extends Application{
         gameOverView.getExitGame().setOnAction(actionEvent -> System.exit(0));
         gameOverView.getRestartButton().setOnAction(actionEvent -> {
 
-            for(Alien alien: mAliens){
-                spaceCanvas.clear(alien);
-            }
-            for(Bullet bullet: mBullets){
-                spaceCanvas.clear(bullet);
-            }
-            spaceCanvas.clear(spaceship);
 
             loadGame();
             stage.setScene( gameView.getGameScene() );
