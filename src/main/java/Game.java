@@ -42,6 +42,7 @@ public class Game extends Application{
     public void start(Stage theStage) {
 
         this.stage = theStage;
+        this.stage.getIcons().add(new Image("images/icon.png"));
 
         initMenu();
         initOptions();
@@ -362,15 +363,20 @@ public class Game extends Application{
 
         //New Game
         menuView.getNewGameButton().setOnAction( actionEvent -> {
-            System.out.println("OK");
-            //TODO: remove options button
-            //Remove options button
-            menuView.getMenuLayer().getChildren().remove( menuView.getOptionsButton() );
+
+            menuView.getVBox().getChildren().remove(menuView.getOptionsButton());
+            menuView.getNewGameButton().setText("Play");
 
             //Load game
-            loadGame();
+            if(!isShownMenuLayer){
+                loadGame();
+                //Show game layer
+            } else{
+                //Start animationTimer
+                animationTimer.start();
+                isShownMenuLayer = false;
+            }
 
-            //Show game layer
             stage.setScene( gameView.getGameScene() );
         });
 

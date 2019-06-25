@@ -19,9 +19,10 @@ public class MenuView {
 
     private Scene menuScene;
     private Pane menuLayer = new Pane();
-    private Button newGameButton = new Button("New game");
+    private Button newGameButton = new Button("New Game");
     private Button optionsButton = new Button("Options");
     private Button exitGame = new Button("Exit");
+    private VBox vBox = new VBox();
 
     private MenuView() {
         initMenuLayer();
@@ -29,7 +30,6 @@ public class MenuView {
     }
 
     private void initMenuLayer() {
-        VBox vBox = new VBox();
         vBox.setAlignment(Pos.CENTER);
         vBox.setSpacing(40);
         vBox.setPrefSize(600, 600);
