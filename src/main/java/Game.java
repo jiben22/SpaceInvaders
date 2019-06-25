@@ -4,8 +4,11 @@ import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 import models.*;
 import views.GameOverView;
 import views.GameView;
@@ -21,6 +24,8 @@ public class Game extends Application{
     private OptionsView optionsView = OptionsView.getInstance();
     private GameOverView gameOverView = GameOverView.getInstance();
     private Stage stage;
+
+    private models.Game game;
 
     private SpaceCanvas spaceCanvas = SpaceCanvas.getInstance();
     private Canvas canvas = spaceCanvas.getCanvas();
@@ -71,9 +76,16 @@ public class Game extends Application{
         this.mAliens = new ArrayList<>();
         this.mBullets = new ArrayList<>();
 
+        //Create game
+        game = new models.Game(0);
+        //Start music
+        //startMusic();
+
+        //Write informations
+        spaceCanvas.writeInformations();
+
         //Add Spaceship
         createSpaceship();
-
         //Add Aliens
         createAliens(aliensPerRow, aliensPerColumn, alienXSpeed);
 
@@ -115,7 +127,7 @@ public class Game extends Application{
                 }
                 bulletAlienCollisionHandler(now, lastUpdateExplosion);
 
-                 /* Le spaceship se délplace de gauche à droite
+                /* Le spaceship se délplace de gauche à droite
                  *
                  * Elements qui demandent une action de l'utilisateur :
                  *  - Spaceship
@@ -501,8 +513,6 @@ public class Game extends Application{
         optionsView.getImageViewAlien().setImage( imageView.getImage() );
     }
 
-
-
     private void pause() {
 
 
@@ -525,6 +535,22 @@ public class Game extends Application{
             }
         }
     }
+
+    /*private void startMusic() {
+        Media media = game.getMp3MusicFile();
+        //System.out.println(media.getDuration());
+
+        //Check if media is not null
+        if ( media != null ) {
+            MediaPlayer musicplayer = new MediaPlayer( media );
+            musicplayer.setAutoPlay(true);
+            musicplayer.setVolume(1);
+
+            //***************** loop (repeat) the musics  ******************
+            musicplayer.setOnEndOfMedia(() -> musicplayer.seek(Duration.ZERO) );
+            //*************** end of loop (repeat) the musics  **************
+        }
+    }*/
 
     public static void main(String[] args) {
         launch(args);

@@ -42,4 +42,17 @@ public class SpaceCanvas {
                 animatedComponent.getHeight()
         );
     }
+
+    public void writeInformations() {
+        writeScore();
+        writeLife();
+    }
+
+    private void writeScore() {
+
+    }
+
+    private void writeLife() {
+
+    }
 }
