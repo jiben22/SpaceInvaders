@@ -47,6 +47,7 @@ public class Game extends Application{
     public void start(Stage theStage) {
 
         this.stage = theStage;
+        this.stage.getIcons().add(new Image("images/icon.png"));
 
         initMenu();
         initOptions();
@@ -71,6 +72,21 @@ public class Game extends Application{
     }
 
     private void loadGame() {
+        //clear canvas
+        if(mAliens != null){
+            for(Alien alien: mAliens){
+                spaceCanvas.clear(alien);
+            }
+        }
+        if(mBullets != null){
+            for(Bullet bullet: mBullets){
+                spaceCanvas.clear(bullet);
+            }
+        }
+        if(spaceship != null) {
+            spaceCanvas.clear(spaceship);
+        }
+
         //Reset all components
         this.spaceship = null;
         this.mAliens = new ArrayList<>();
@@ -374,16 +390,22 @@ public class Game extends Application{
 
         //New Game
         menuView.getNewGameButton().setOnAction( actionEvent -> {
-            System.out.println("OK");
-            //TODO: remove options button
-            //Remove options button
-            menuView.getMenuLayer().getChildren().remove( menuView.getOptionsButton() );
+
+            menuView.getVBox().getChildren().remove(menuView.getOptionsButton());
+            menuView.getNewGameButton().setText("Play");
 
             //Load game
-            loadGame();
+            if(!isShownMenuLayer){
+                loadGame();
+                //Show game layer
+            } else{
+                //Start animationTimer
+                animationTimer.start();
+                isShownMenuLayer = false;
+            }
 
-            //Show game layer
             stage.setScene( gameView.getGameScene() );
+
         });
 
         //Options
@@ -394,6 +416,15 @@ public class Game extends Application{
 
         //Exit
         menuView.getExitGame().setOnAction( actionEvent -> System.exit(0) );
+
+        gameOverView.getExitGame().setOnAction(actionEvent -> System.exit(0));
+        gameOverView.getRestartButton().setOnAction(actionEvent -> {
+
+
+            loadGame();
+            stage.setScene( gameView.getGameScene() );
+
+        });
     }
 
     private void initOptions() {
