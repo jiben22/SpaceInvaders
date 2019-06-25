@@ -378,6 +378,7 @@ public class Game extends Application{
             }
 
             stage.setScene( gameView.getGameScene() );
+
         });
 
         //Options
@@ -388,6 +389,22 @@ public class Game extends Application{
 
         //Exit
         menuView.getExitGame().setOnAction( actionEvent -> System.exit(0) );
+
+        gameOverView.getExitGame().setOnAction(actionEvent -> System.exit(0));
+        gameOverView.getRestartButton().setOnAction(actionEvent -> {
+
+            for(Alien alien: mAliens){
+                spaceCanvas.clear(alien);
+            }
+            for(Bullet bullet: mBullets){
+                spaceCanvas.clear(bullet);
+            }
+            spaceCanvas.clear(spaceship);
+
+            loadGame();
+            stage.setScene( gameView.getGameScene() );
+
+        });
     }
 
     private void initOptions() {
