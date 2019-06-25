@@ -85,21 +85,20 @@ public class OptionsView {
     private BorderPane  createBackgroundBorderPane() {
         BorderPane borderPane = new BorderPane();
 
-        //Create all wallpapers
-        ImageView imageView1 = new ImageView(new Image("images/wallpapers/galaxy.jpg"));
-        imageView1.setFitHeight(200);
-        imageView1.setFitWidth(200);
-        ImageView imageView2 = new ImageView(new Image("images/wallpapers/nightFarm.jpg"));
-        imageView2.setFitHeight(200);
-        imageView2.setFitWidth(200);
-        ImageView imageView3 = new ImageView(new Image("images/wallpapers/snowMountain.jpeg"));
-        imageView3.setFitHeight(200);
-        imageView3.setFitWidth(200);
-
+        //Path of wallpapers
+        String imagesPath[] = {
+                "images/wallpapers/backlit.jpg",
+                "images/wallpapers/astronomyDolomitesEvening.jpg",
+                "images/wallpapers/astronomyEvening.jpg",
+                "images/wallpapers/coldDaylight.jpg",
+                "images/wallpapers/environment.jpg",
+                "images/wallpapers/forest.jpg"
+        };
         //Add wallpapers choice
-        imageViewsWallpapers.add(imageView1);
-        imageViewsWallpapers.add(imageView2);
-        imageViewsWallpapers.add(imageView3);
+        for ( int indexImagesPath = 0; indexImagesPath < imagesPath.length; indexImagesPath++ ) {
+            ImageView imageView = createImageView( imagesPath[ indexImagesPath ], 200, 200 );
+            imageViewsWallpapers.add(imageView);
+        }
 
         imageViewWallpaper = imageViewsWallpapers.get( indexWallpaper );
         //Add components to VBox
@@ -193,5 +192,13 @@ public class OptionsView {
         );
 
         return hBox;
+    }
+
+    private ImageView createImageView(String imagePath, int width, int height) {
+        ImageView imageView = new ImageView(new Image( imagePath ));
+        imageView.setFitHeight( width );
+        imageView.setFitWidth( height );
+
+        return imageView;
     }
 }

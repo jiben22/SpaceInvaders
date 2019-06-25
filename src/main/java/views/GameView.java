@@ -27,7 +27,7 @@ public class GameView {
     private void initGameLayer() {
         //Add background image to game layer
         BackgroundImage backgroundImage= new BackgroundImage(
-                new Image("images/wallpapers/galaxy.jpg",
+                new Image("images/wallpapers/backlit.jpg",
                         canvas.getWidth(),canvas.getHeight(),
                         false,true),
                 BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT,

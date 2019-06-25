@@ -294,12 +294,12 @@ public class Game extends Application{
         for( int iColumn = 0; iColumn < aliensPerColumn; iColumn++ ) {
             for( int iRow = 0; iRow < aliensPerRow; iRow++ ) {
                 //Create new Alien
-                Alien alien = Alien.alien2(x, y, alienXSpeed);
+                Alien alien = Alien.alien1(x, y, alienXSpeed);
 
                 //Define frame of size of alien
                 alien.getSprite().setWidth( alien.getSprite().getWidth() / alien.getSprite().getNbFrames() );
-                alien.setWidth( (int) (alien.getWidth() * 1.2) );
-                alien.setHeight( (int) (alien.getHeight() * 1.2) );
+                alien.setWidth( (int) (alien.getWidth() * 1) );
+                alien.setHeight( (int) (alien.getHeight() * 1) );
 
                 //Add alien to List
                 mAliens.add(alien);
@@ -362,6 +362,11 @@ public class Game extends Application{
 
         //New Game
         menuView.getNewGameButton().setOnAction( actionEvent -> {
+            System.out.println("OK");
+            //TODO: remove options button
+            //Remove options button
+            menuView.getMenuLayer().getChildren().remove( menuView.getOptionsButton() );
+
             //Load game
             loadGame();
 
