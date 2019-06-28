@@ -1,8 +1,13 @@
 package models;
 
+import javafx.geometry.Rectangle2D;
 import javafx.scene.image.*;
+import javafx.scene.image.Image;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.awt.*;
+
 
 @Getter @Setter
 public class Sprite {
@@ -56,6 +61,9 @@ public class Sprite {
             //Reset to frame 1
             this.dy -= this.height * (nbFrames - 1);
             this.currentFrame = 1;
+
         }
     }
+
+
 }

@@ -1,5 +1,6 @@
 package models;
 
+import javafx.geometry.Rectangle2D;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -28,25 +29,33 @@ public abstract class AnimatedComponent {
 
     public void moveUp() {
         spaceCanvas.clear(this);
-        this.y -= this.getYSpeed()*0.1;
+        this.y -= this.ySpeed;
         spaceCanvas.draw(this);
     }
 
     public void moveRight() {
         spaceCanvas.clear(this);
-        this.x += this.getXSpeed()*0.1;
+        this.x += this.xSpeed;
         spaceCanvas.draw(this);
     }
 
     public void moveDown() {
         spaceCanvas.clear(this);
-        this.y += this.getYSpeed();
+        this.y += this.ySpeed;
         spaceCanvas.draw(this);
     }
 
     public void moveLeft() {
         spaceCanvas.clear(this);
-        this.x -= this.getXSpeed()*0.1;
+        this.x -= this.xSpeed;
         spaceCanvas.draw(this);
+    }
+
+    public Rectangle2D getBoundary() {
+        return new Rectangle2D(this.x, this.y, this.width, this.height);
+    }
+
+    public boolean intersects(AnimatedComponent a) {
+        return a.getBoundary().intersects(this.getBoundary());
     }
 }

@@ -33,12 +33,13 @@ public class Game extends Application{
     private Spaceship spaceship;
     private List<Alien> mAliens;
     private List<Bullet> mBullets;
+    private List<Explosion> mExplosions;
 
     private AnimationTimer animationTimer;
 
-    private int aliensPerRow = 5;
-    private int aliensPerColumn = 5;
-    private int alienXSpeed = 200;
+    private int aliensPerRow = 4;
+    private int aliensPerColumn = 2;
+    private int alienXSpeed = 1;
 
     //TODO: set to keyboardEvents()
     private boolean isShownMenuLayer = false;
@@ -51,7 +52,6 @@ public class Game extends Application{
 
         initMenu();
         initOptions();
-
 
         //Add events for scenes
         keyboardEvents( menuView.getMenuScene() );
@@ -86,11 +86,15 @@ public class Game extends Application{
         if(spaceship != null) {
             spaceCanvas.clear(spaceship);
         }
+        this.aliensPerRow = 4;
+        this.aliensPerColumn = 2;
+        this.alienXSpeed = 10;
 
         //Reset all components
         this.spaceship = null;
         this.mAliens = new ArrayList<>();
         this.mBullets = new ArrayList<>();
+        this.mExplosions = new ArrayList<>();
 
         //Create game
         game = new models.Game(0);
@@ -118,7 +122,7 @@ public class Game extends Application{
                  * Les aliens se déplacent de gauche à droite et descendent lorsqu'il touchent le bord du canvas
                  *
                  /* Les bullets se déplacent de bas en haut et détruisent les aliens à leur contact */
-                moveBullets();
+                    moveBullets();
 
                 /* Check collision between Bullet and Alien
                  * Les aliens se déplacent de gauche à droite et descendent lorsqu'il touchent le bord du canvas
@@ -138,7 +142,8 @@ public class Game extends Application{
                 //
                 if (now - lastUpdateAliens >= 28_000_000 * 10) {
                     //Change direction of aliens if one alien exceed min/max of canvas
-                    areAllowedMovingRight = moveAliens(this.areAllowedMovingRight);
+
+                        areAllowedMovingRight = moveAliens(this.areAllowedMovingRight);
                     lastUpdateAliens = now ;
                 }
                 bulletAlienCollisionHandler(now, lastUpdateExplosion);
@@ -170,6 +175,7 @@ public class Game extends Application{
         for ( Alien lAlien: mAliens ) {
             //Check if aliens do not exceed min/max width of canvas
             if ( lAlien.getX() >= canvas.getWidth() - lAlien.getWidth() ) {
+
                 moveDownAliens();
                 areAllowedMovingRight = false;
             }
@@ -182,8 +188,13 @@ public class Game extends Application{
             lAlien.getSprite().nextFrameOffsetX();
 
             //Move according to direction (left/right)
-            if( areAllowedMovingRight ) { lAlien.moveRight(); }
-            else { lAlien.moveLeft(); }
+            if( areAllowedMovingRight ) {
+
+                    lAlien.moveRight();
+            }
+            else {
+
+                    lAlien.moveLeft(); }
         }
 
         return areAllowedMovingRight;
@@ -192,7 +203,7 @@ public class Game extends Application{
     private void moveDownAliens() {
         for ( Alien lAlien: mAliens ) {
             //Move down all aliens
-            lAlien.moveDown();
+                lAlien.moveDown();
         }
     }
 
@@ -203,8 +214,7 @@ public class Game extends Application{
             for( int indexAlien = mAliens.size()-1; indexAlien >= 0; indexAlien-- ) {
                 Alien lAlien = mAliens.get(indexAlien);
 
-                if(lBullet.getX() >= lAlien.getX() - lAlien.getWidth()/2 && lBullet.getX() <= lAlien.getX() + lAlien.getWidth()){
-                    if(lBullet.getY() >= lAlien.getY() + lAlien.getHeight()/2 && lBullet.getY() <= lAlien.getY() + lAlien.getHeight()) {
+                if(lAlien.intersects(lBullet)){
 
                         //createExplosion(lAlien.getX() - lAlien.getWidth(), lAlien.getY() - lAlien.getHeight(), now, lastUpdateExplosion);
                         spaceCanvas.clear(lBullet);
@@ -215,23 +225,9 @@ public class Game extends Application{
                         mAliens.remove(indexAlien);
                         break;
                     }
-                }
+                //}
             }
         }
-
-        for(Alien lAlien: mAliens){
-            if(lAlien.getY() + lAlien.getHeight() >= spaceship.getY()){
-                spaceCanvas.clear(lAlien);
-                //TODO: WHAT ?
-                //mAliens.removeAll(lAlien);
-                spaceCanvas.clear(spaceship);
-                System.out.println("Game Over !");
-                break;
-            }
-        }
-
-        //Foreach bullet, check if there is a collision with an alien
-
     }
 
     private void moveBullets() {
@@ -252,19 +248,22 @@ public class Game extends Application{
 
     private void aliensHaveWon() {
         for(Alien lAlien: mAliens){
-            if(lAlien.getY() + lAlien.getHeight() >= spaceship.getY()){
+            if(lAlien.intersects(spaceship)){
+                stage.setScene( gameOverView.getGameOverScene() );
                 spaceCanvas.clear(lAlien);
                 spaceCanvas.clear(spaceship);
                 animationTimer.stop();
-                stage.setScene( gameOverView.getGameOverScene() );
             }
         }
     }
 
     private void alienWaveIsStillAlive() {
-        // si tous les aliens sont morts, déploiement d'une nouvelle vague plus forte (vitesse++, musique++)
-        //Le caractère infini du jeu va se faire ici
 
+        if (mAliens.isEmpty()) {
+            this.aliensPerColumn += 1;
+            this.alienXSpeed += 2;
+            createAliens(this.aliensPerRow, this.aliensPerColumn, this.alienXSpeed);
+        }
 
     }
 
@@ -281,7 +280,6 @@ public class Game extends Application{
                 case RIGHT:
                     if( spaceship != null && spaceship.getX() <= canvas.getWidth() - spaceship.getWidth()  ) {
                         spaceship.getSprite().nextFrameOffsetX();
-
                         spaceship.moveRight();
                     }
                     break;
@@ -298,7 +296,7 @@ public class Game extends Application{
     }
 
     private void createSpaceship() {
-        spaceship = Spaceship.spaceship1((int) canvas.getWidth() / 2, (int) canvas.getHeight(), 100);
+        spaceship = Spaceship.spaceship1((int) canvas.getWidth() / 2, (int) canvas.getHeight(), 5);
         //Get 1st frame of spaceship
         spaceship.getSprite().setWidth( spaceship.getSprite().getWidth() / 2 );
         //Modify x, y positions on canvas of spaceship with his width and his height
@@ -313,29 +311,30 @@ public class Game extends Application{
 
     private void createAliens(int aliensPerRow, int aliensPerColumn, int alienXSpeed) {
         //Init x, y positions on canvas
-        int originX = 0;
+        int originX = 40;
         int x = originX;
-        int y = 0;
+        int y = 40;
 
         int alienHeight = 0;
 
-        for( int iColumn = 0; iColumn < aliensPerColumn; iColumn++ ) {
-            for( int iRow = 0; iRow < aliensPerRow; iRow++ ) {
+        for( int iColumn = 0; iColumn <= aliensPerColumn; iColumn++ ) {
+            for( int iRow = 0; iRow <= aliensPerRow; iRow++ ) {
                 //Create new Alien
                 Alien alien = Alien.alien1(x, y, alienXSpeed);
 
                 //Define frame of size of alien
                 alien.getSprite().setWidth( alien.getSprite().getWidth() / alien.getSprite().getNbFrames() );
-                alien.setWidth( (int) (alien.getWidth() * 1) );
-                alien.setHeight( (int) (alien.getHeight() * 1) );
+                alien.setWidth( alien.getWidth() );
+                alien.setHeight( alien.getHeight() );
 
-                //Add alien to List
-                mAliens.add(alien);
+
                 //Increment x position with alien width
                 x += alien.getWidth() + 10;
                 if( alienHeight < alien.getHeight() ) {
                     alienHeight = alien.getHeight();
                 }
+                //Add alien to List
+                mAliens.add(alien);
             }
             //Increment y position with alien height and reset x position
             x = originX;
@@ -346,6 +345,7 @@ public class Game extends Application{
         for (Alien lAlien: mAliens) {
             spaceCanvas.draw(lAlien);
         }
+
     }
 
     private void createBullet() {
@@ -353,7 +353,7 @@ public class Game extends Application{
         Bullet bullet = Bullet.bullet1(
                 spaceship.getX() + spaceship.getWidth() / 2,
                 spaceship.getY() - spaceship.getHeight(),
-                50
+                5
         );
         //Define frame of size of bullet
         bullet.getSprite().setHeight( bullet.getSprite().getHeight() / bullet.getSprite().getNbFrames() );
@@ -368,6 +368,7 @@ public class Game extends Application{
 
         //Draw bullet
         spaceCanvas.draw(bullet);
+
     }
 
 
@@ -376,11 +377,17 @@ public class Game extends Application{
         explosion.setWidth(explosion.getWidth() / 6);
         explosion.setHeight(explosion.getHeight() / 6);
 
+        mExplosions.add(explosion);
 
         //TODO: draw and clear explosion sprite
-        for (int iTest = 0; iTest <= 1500; iTest++) {
-            spaceCanvas.draw(explosion);
+        spaceCanvas.draw(explosion);
+
+        for(int i =0; i<3000; i++){
+            for(Explosion expl : mExplosions) {
+                spaceCanvas.clear(expl);
+            }
         }
+        mExplosions.remove(explosion);
 
     }
 
@@ -501,14 +508,14 @@ public class Game extends Application{
                 this.alienXSpeed = 50;
                 break;
             case "Medium":
-                this.aliensPerRow = 5;
-                this.aliensPerColumn = 5;
+                this.aliensPerRow = 10;
+                this.aliensPerColumn = 10;
                 this.alienXSpeed = 60;
                 break;
             case "Hard":
-                this.aliensPerRow = 5;
-                this.aliensPerColumn = 6;
-                this.alienXSpeed = 60;
+                this.aliensPerRow = 15;
+                this.aliensPerColumn = 16;
+                this.alienXSpeed = 70;
                 break;
         }
 
