@@ -1,7 +1,9 @@
 package models;
 
+import javafx.geometry.Rectangle2D;
 import lombok.Getter;
 import lombok.Setter;
+
 
 @Getter @Setter
 public class Alien extends AnimatedComponent {
@@ -13,11 +15,14 @@ public class Alien extends AnimatedComponent {
 
     public static Alien alien1(int x, int y, int xSpeed) {
         Sprite sprite = new Sprite(343, 199, 66, 21, 1, 2);
+
+
         return new Alien(x, y, sprite, sprite.getWidth() / sprite.getNbFrames(), sprite.getHeight(), xSpeed);
     }
 
     public static Alien alien2(int x, int y, int xSpeed) {
         Sprite sprite = new Sprite(410, 199, 66, 21, 1, 2);
+
         return new Alien(x, y, sprite, sprite.getWidth() / sprite.getNbFrames(), sprite.getHeight(), xSpeed);
     }
 }

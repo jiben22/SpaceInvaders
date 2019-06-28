@@ -14,6 +14,7 @@ public abstract class AnimatedComponent {
     private int xSpeed;
     private int ySpeed;
     private boolean moveable;
+    private Rectangle2D rectangle;
 
     private SpaceCanvas spaceCanvas = SpaceCanvas.getInstance();
 
@@ -25,30 +26,35 @@ public abstract class AnimatedComponent {
         this.height = height;
         this.xSpeed = xSpeed;
         this.ySpeed = ySpeed;
+        this.rectangle = new Rectangle2D(this.getX(), this.getY(), this.getWidth(), this.getHeight());
     }
 
     public void moveUp() {
         spaceCanvas.clear(this);
         this.y -= this.ySpeed;
         spaceCanvas.draw(this);
+        this.setRectangle(new Rectangle2D(this.x, this.y, this.width, this.height));
     }
 
     public void moveRight() {
         spaceCanvas.clear(this);
         this.x += this.xSpeed;
         spaceCanvas.draw(this);
+        this.setRectangle(new Rectangle2D(this.x, this.y, this.width, this.height));
     }
 
     public void moveDown() {
         spaceCanvas.clear(this);
-        this.y += this.ySpeed;
+        this.y += this.getRectangle().getHeight();
         spaceCanvas.draw(this);
+        this.setRectangle(new Rectangle2D(this.x, this.y, this.width, this.height));
     }
 
     public void moveLeft() {
         spaceCanvas.clear(this);
         this.x -= this.xSpeed;
         spaceCanvas.draw(this);
+        this.setRectangle(new Rectangle2D(this.x, this.y, this.width, this.height));
     }
 
     public Rectangle2D getBoundary() {
@@ -58,4 +64,5 @@ public abstract class AnimatedComponent {
     public boolean intersects(AnimatedComponent a) {
         return a.getBoundary().intersects(this.getBoundary());
     }
+
 }

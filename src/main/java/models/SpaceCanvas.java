@@ -43,7 +43,7 @@ public class SpaceCanvas {
         );
     }
 
-    public void writeInformations() {
+    public void writeInformation() {
         writeScore();
         writeLife();
     }
