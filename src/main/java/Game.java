@@ -38,7 +38,7 @@ public class Game extends Application{
 
     private int aliensPerRow = 5;
     private int aliensPerColumn = 5;
-    private int alienXSpeed = 50;
+    private int alienXSpeed = 200;
 
     //TODO: set to keyboardEvents()
     private boolean isShownMenuLayer = false;
@@ -204,9 +204,9 @@ public class Game extends Application{
                 Alien lAlien = mAliens.get(indexAlien);
 
                 if(lBullet.getX() >= lAlien.getX() - lAlien.getWidth()/2 && lBullet.getX() <= lAlien.getX() + lAlien.getWidth()){
-                    if(lBullet.getY() <= lAlien.getY()) {
+                    if(lBullet.getY() >= lAlien.getY() + lAlien.getHeight()/2 && lBullet.getY() <= lAlien.getY() + lAlien.getHeight()) {
 
-                        createExplosion(lAlien.getX() - lAlien.getWidth(), lAlien.getY() - lAlien.getHeight(), now, lastUpdateExplosion);
+                        //createExplosion(lAlien.getX() - lAlien.getWidth(), lAlien.getY() - lAlien.getHeight(), now, lastUpdateExplosion);
                         spaceCanvas.clear(lBullet);
                         spaceCanvas.clear(lAlien);
 
@@ -298,7 +298,7 @@ public class Game extends Application{
     }
 
     private void createSpaceship() {
-        spaceship = Spaceship.spaceship1((int) canvas.getWidth() / 2, (int) canvas.getHeight(), 10);
+        spaceship = Spaceship.spaceship1((int) canvas.getWidth() / 2, (int) canvas.getHeight(), 100);
         //Get 1st frame of spaceship
         spaceship.getSprite().setWidth( spaceship.getSprite().getWidth() / 2 );
         //Modify x, y positions on canvas of spaceship with his width and his height
@@ -353,7 +353,7 @@ public class Game extends Application{
         Bullet bullet = Bullet.bullet1(
                 spaceship.getX() + spaceship.getWidth() / 2,
                 spaceship.getY() - spaceship.getHeight(),
-                4
+                50
         );
         //Define frame of size of bullet
         bullet.getSprite().setHeight( bullet.getSprite().getHeight() / bullet.getSprite().getNbFrames() );

@@ -28,13 +28,13 @@ public abstract class AnimatedComponent {
 
     public void moveUp() {
         spaceCanvas.clear(this);
-        this.y -= this.getYSpeed();
+        this.y -= this.getYSpeed()*0.1;
         spaceCanvas.draw(this);
     }
 
     public void moveRight() {
         spaceCanvas.clear(this);
-        this.x += this.getXSpeed();
+        this.x += this.getXSpeed()*0.1;
         spaceCanvas.draw(this);
     }
 
@@ -46,7 +46,7 @@ public abstract class AnimatedComponent {
 
     public void moveLeft() {
         spaceCanvas.clear(this);
-        this.x -= this.getXSpeed();
+        this.x -= this.getXSpeed()*0.1;
         spaceCanvas.draw(this);
     }
 }
