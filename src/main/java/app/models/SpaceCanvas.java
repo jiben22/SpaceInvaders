@@ -1,13 +1,9 @@
-package app.model;
+package app.models;
 
-import app.controller.InformationController;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.paint.Color;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.util.List;
 
 @Getter @Setter
 public class SpaceCanvas {

@@ -1,9 +1,9 @@
 package app;
 
-import app.controller.InformationController;
-import app.controller.MenuController;
-import app.controller.OptionsController;
-import app.model.*;
+import app.controllers.InformationController;
+import app.controllers.MenuController;
+import app.controllers.OptionsController;
+import app.models.*;
 import app.views.GameOverView;
 import app.views.GameView;
 import app.views.MenuView;
@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class GameLoop extends Application {
+public class Main extends Application {
 
     private MenuView menuView = MenuView.getInstance();
     private GameView gameView = GameView.getInstance();
@@ -33,23 +33,20 @@ public class GameLoop extends Application {
     private Canvas canvas = spaceCanvas.getCanvas();
     private InformationController informationController = new InformationController(canvas.getGraphicsContext2D(), canvas);
 
-
     private Spaceship spaceship;
     private List<Alien> mAliens;
     private List<Bullet> mBullets;
 
     private AnimationTimer animationTimer;
 
-    private app.model.Game game = new app.model.Game(0);
     private Player player = new Player("Player 1", 5, 5);
 
-    private int aliensPerRow;
-    private int aliensPerColumn;
-    private int alienXSpeed;
+    public static int aliensPerRow = 8;
+    public static int aliensPerColumn = 3;
+    public static int alienXSpeed = 10;
 
     private boolean isShownMenuScene = false;
     private boolean aliensHaveNotJustBeenCreated = false;
-    private boolean parametersUpdated = false;
 
     @Override
     public void start(Stage theStage) {
@@ -90,12 +87,6 @@ public class GameLoop extends Application {
         }
         if ( spaceship != null ) {
             spaceCanvas.clear(spaceship);
-        }
-
-        if ( !parametersUpdated ) {
-            this.aliensPerRow = 8;
-            this.aliensPerColumn = 3;
-            this.alienXSpeed = 10;
         }
 
         this.player.setLives(5);
@@ -302,41 +293,11 @@ public class GameLoop extends Application {
     }
 
     public void updateParametersGame() {
-
-        parametersUpdated =true;
         /* Get all options and apply to game */
         //Get wallpaper
         ImageView imageViewWallpaper = optionsView.getImageViewWallpaper();
         imageViewWallpaper.setFitWidth( gameView.getCanvas().getWidth() );
         imageViewWallpaper.setFitHeight( gameView.getCanvas().getHeight() );
-
-        //Get level
-        String level = optionsView.getEasyButton().getText();
-        if ( optionsView.getEasyButton().isSelected() ) { level = optionsView.getEasyButton().getText(); }
-        else if ( optionsView.getMediumButton().isSelected() ) { level = optionsView.getMediumButton().getText(); }
-        else if ( optionsView.getHardButton().isSelected() ) { level = optionsView.getHardButton().getText(); }
-
-        switch (level) {
-            case "Easy":
-                this.aliensPerRow = 8;
-                this.aliensPerColumn = 3;
-                this.alienXSpeed = 10;
-                parametersUpdated = true;
-                break;
-            case "Medium":
-                this.aliensPerRow = 16;
-                this.aliensPerColumn = 5;
-                this.alienXSpeed = 15;
-                parametersUpdated = true;
-
-                break;
-            case "Hard":
-                this.aliensPerRow = 20;
-                this.aliensPerColumn = 8;
-                this.alienXSpeed = 20;
-                parametersUpdated = true;
-                break;
-        }
 
         //Add background image to game scene
         BackgroundImage backgroundImage = new BackgroundImage(
@@ -384,7 +345,7 @@ public class GameLoop extends Application {
     }
 
     private void createSpaceship() {
-        spaceship = Spaceship.spaceship1((int) canvas.getWidth() / 2, (int) canvas.getHeight() - 20, 5);
+        spaceship = Spaceship.spaceship1((int) canvas.getWidth() / 2, (int) canvas.getHeight() - 20, 10);
         //Get 1st frame of spaceship
         spaceship.getSprite().setWidth( spaceship.getSprite().getWidth() / 2 );
         //Modify x, y positions on canvas of spaceship with its width and height

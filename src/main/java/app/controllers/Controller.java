@@ -1,4 +1,4 @@
-package app.controller;
+package app.controllers;
 
 import app.views.GameOverView;
 import app.views.GameView;

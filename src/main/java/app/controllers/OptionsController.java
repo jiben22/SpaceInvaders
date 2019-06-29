@@ -1,13 +1,8 @@
-package app.controller;
+package app.controllers;
 
-import app.GameLoop;
-import app.views.MenuView;
-import javafx.scene.image.Image;
+import app.Main;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.*;
 import javafx.stage.Stage;
-import app.model.SpaceCanvas;
-import app.views.GameView;
 import app.views.OptionsView;
 
 import java.util.List;
@@ -16,7 +11,7 @@ public class OptionsController extends Controller{
 
 
 
-    public OptionsController(GameLoop gameLoop, Stage stage) {
+    public OptionsController(Main main, Stage stage) {
 
         OptionsView optionsView = OptionsView.getInstance();
 
@@ -46,6 +41,23 @@ public class OptionsController extends Controller{
             }
         });
 
+        //Levels
+        optionsView.getEasyButton().setOnAction(keyEvent -> {
+            Main.aliensPerRow = 8;
+            Main.aliensPerColumn = 3;
+            Main.alienXSpeed = 10;
+        } );
+        optionsView.getMediumButton().setOnAction(keyEvent -> {
+            Main.aliensPerRow = 10;
+            Main.aliensPerColumn = 4;
+            Main.alienXSpeed = 15;
+        } );
+        optionsView.getHardButton().setOnAction(keyEvent -> {
+            Main.aliensPerRow = 10;
+            Main.aliensPerColumn = 4;
+            Main.alienXSpeed = 20;
+        } );
+
         //Cancel
         optionsView.getCancelButton().setOnAction(actionEvent -> {
             //Show menu scene
@@ -55,9 +67,9 @@ public class OptionsController extends Controller{
         //Validate
         optionsView.getValidateButton().setOnAction(actionEvent -> {
 
-            gameLoop.updateParametersGame();
+            main.updateParametersGame();
             //Load game and show game scene
-            gameLoop.loadGame();
+            main.loadGame();
             stage.setScene(gameView.getGameScene());
         });
     }

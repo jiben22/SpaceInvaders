@@ -6,6 +6,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ToggleButton;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
@@ -138,43 +139,6 @@ public class OptionsView {
 
         return hBox;
     }
-
-    /*private BorderPane  createAliensBorderPane() {
-        BorderPane borderPane = new BorderPane();
-
-        //Create all aliens
-        Alien alien1 = Alien.alien1(0, 0, 0);
-        Alien alien2 = Alien.alien2(0, 0, 0);
-
-        ImageView imageView1 = alien1.getSprite().getImageView();
-        imageView1.setFitHeight(200);
-        imageView1.setFitWidth(200);
-        ImageView imageView2 = alien2.getSprite().getImageView();
-        imageView2.setFitHeight(200);
-        imageView2.setFitWidth(200);
-
-        //Add aliens choice
-        imageViewsAliens.add(imageView1);
-        imageViewsAliens.add(imageView2);
-
-        imageViewAlien = imageViewsAliens.get( indexAlien );
-        //Add components to VBox
-        borderPane.setTop( alienLabel );
-        borderPane.setRight( rightAlienButton );
-        borderPane.setLeft( leftAlienButton );
-        borderPane.setCenter( imageViewAlien );
-
-        //Alignment
-        BorderPane.setAlignment( alienLabel, Pos.CENTER );
-        BorderPane.setAlignment( rightAlienButton, Pos.CENTER );
-        BorderPane.setAlignment( leftAlienButton, Pos.CENTER );
-        BorderPane.setAlignment( imageViewAlien, Pos.CENTER );
-        //Margin/Padding
-        BorderPane.setMargin( imageViewAlien, new Insets(50,20,0,20) );
-        borderPane.setPadding( new Insets(10,50,0,50) );
-
-        return borderPane;
-    }*/
 
     private HBox createCancelValidateHBox() {
         HBox hBox = new HBox();

@@ -1,18 +1,16 @@
-package app.controller;
+package app.controllers;
 
-import app.GameLoop;
-import app.views.GameView;
+import app.Main;
 import app.views.MenuView;
-import app.views.OptionsView;
 import javafx.stage.Stage;
 
 public class MenuController extends Controller {
 
-    public MenuController(GameLoop gameLoop, Stage stage) {
+    public MenuController(Main main, Stage stage) {
 
             MenuView menuView = MenuView.getInstance();
 
-            //New app.GameLoop
+            //New app.Main
             menuView.getNewGameButton().setOnAction( actionEvent -> {
 
                 menuView.getVBox().getChildren().remove(menuView.getOptionsButton());
@@ -20,7 +18,7 @@ public class MenuController extends Controller {
 
                 //Load game
                 if(!isShownMenuScene){
-                    gameLoop.loadGame();
+                    main.loadGame();
                     //Show game scene
                 } else{
                     //Start animationTimer
@@ -45,7 +43,7 @@ public class MenuController extends Controller {
             gameOverView.getRestartButton().setOnAction(actionEvent -> {
 
 
-                gameLoop.loadGame();
+                main.loadGame();
                 stage.setScene( gameView.getGameScene() );
 
             });

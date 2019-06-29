@@ -40,7 +40,7 @@
                 <artifactId>javafx-maven-plugin</artifactId>
                 <version>0.0.2</version>
                 <configuration>
-                    <mainClass>app.GameLoop</mainClass>
+                    <mainClass>app.Main</mainClass>
                 </configuration>
             </plugin>
             <plugin>
@@ -56,7 +56,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>Game</mainClass>
+                            <mainClass>app.Main</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>

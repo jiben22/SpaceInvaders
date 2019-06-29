@@ -1,4 +1,4 @@
-package app.model;
+package app.models;
 
 import javafx.geometry.Rectangle2D;
 import lombok.Getter;

@@ -1,6 +1,6 @@
-package app.controller;
+package app.controllers;
 
-import app.model.Player;
+import app.models.Player;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
