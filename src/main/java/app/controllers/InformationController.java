@@ -33,6 +33,9 @@ public class InformationController {
         //Clear
         graphicsContext.clearRect(0, 0, canvas.getWidth(), 30);
 
+        if(player.getScore() < 0) {
+            player.setScore(0);
+        }
         //Draw
         graphicsContext.setFill(Color.WHITE);
         graphicsContext.fillText(

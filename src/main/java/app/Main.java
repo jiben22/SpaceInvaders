@@ -102,7 +102,7 @@ public class Main extends Application {
 
         //Create Spaceship and Aliens
         createSpaceship();
-        createAliens(this.aliensPerRow, this.aliensPerColumn, this.alienXSpeed);
+        createAliens(aliensPerRow, aliensPerColumn, alienXSpeed);
 
         //Create a animation timer
         this.animationTimer = new AnimationTimer() {
@@ -274,7 +274,7 @@ public class Main extends Application {
                         //Draw spaceship
                         spaceCanvas.draw(spaceship);
                     }
-                    createAliens(this.aliensPerRow, this.aliensPerColumn, this.alienXSpeed);
+                    createAliens(aliensPerRow, aliensPerColumn, alienXSpeed);
                 }
 
                 break;
@@ -285,14 +285,15 @@ public class Main extends Application {
     private void alienWaveIsStillAlive() {
 
         if (mAliens.isEmpty()) {
-            this.aliensPerColumn += 1;
-            this.alienXSpeed += 2;
-            createAliens(this.aliensPerRow, this.aliensPerColumn, this.alienXSpeed);
+            aliensPerColumn += 1;
+            alienXSpeed += 2;
+            createAliens(aliensPerRow, aliensPerColumn, alienXSpeed);
         }
 
     }
 
     public void updateParametersGame() {
+
         /* Get all options and apply to game */
         //Get wallpaper
         ImageView imageViewWallpaper = optionsView.getImageViewWallpaper();
