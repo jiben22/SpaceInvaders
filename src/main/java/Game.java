@@ -33,6 +33,9 @@ public class Game extends Application {
 
     private AnimationTimer animationTimer;
 
+    private model.Game game = new model.Game(0);
+    private Player player = new Player("Player 1", 5, 5);
+
     private int aliensPerRow;
     private int aliensPerColumn;
     private int alienXSpeed;
@@ -82,7 +85,7 @@ public class Game extends Application {
         if ( !parametersUpdated ) {
             this.aliensPerRow = 8;
             this.aliensPerColumn = 3;
-            this.alienXSpeed = 10;
+            this.alienXSpeed = 100;
         }
 
 
@@ -92,13 +95,11 @@ public class Game extends Application {
         this.mBullets = new ArrayList<>();
         this.mExplosions = new ArrayList<>();
 
-        //Create game
-        model.Game game = new model.Game(0);
         //Start music
         //startMusic();
 
         //Write information
-        spaceCanvas.writeInformation();
+        spaceCanvas.writeInformation(player);
 
         //Create Spaceship and Aliens
         createSpaceship();
@@ -112,6 +113,9 @@ public class Game extends Application {
 
             @Override
             public void handle(long now) {
+                //Write information
+                spaceCanvas.writeInformation(player);
+
                 /*
                  * Les aliens se déplacent de gauche à droite et descendent lorsqu'il touchent le bord du canvas
                  *
@@ -206,21 +210,31 @@ public class Game extends Application {
 
         for( int indexBullet = 0; indexBullet < mBullets.size(); indexBullet++ ) {
             Bullet lBullet = mBullets.get(indexBullet);
+
+            //Check collision with alien
             for( int indexAlien = mAliens.size()-1; indexAlien >= 0; indexAlien-- ) {
                 Alien lAlien = mAliens.get(indexAlien);
 
-                if(lAlien.intersects(lBullet)){
+                if ( lAlien.intersects(lBullet) ) {
 
-                    //createExplosion(lAlien.getX() - lAlien.getWidth(), lAlien.getY() - lAlien.getHeight(), now, lastUpdateExplosion);
+                    //createExplosion(lAlien.getX() - lAlien.getWidth(), lAlien.getY() - lAlien.getHeight());
                     spaceCanvas.clear(lBullet);
                     spaceCanvas.clear(lAlien);
 
                     //Remove bullet and alien from List
                     mBullets.remove(indexBullet);
                     mAliens.remove(indexAlien);
+
+                    //Increment score
+                    player.setScore( player.getScore() + 10 );
+
                     break;
                 }
-                //}
+            }
+
+            //Check if the bullet exceed canvas
+            if ( lBullet.getY() < 0 ) {
+                player.setScore( player.getScore() - 20 );
             }
         }
     }
@@ -243,11 +257,26 @@ public class Game extends Application {
 
     private void aliensHaveWon() {
         for(Alien lAlien: mAliens){
-            if(lAlien.intersects(spaceship)){
-                stage.setScene( gameOverView.getGameOverScene() );
-                spaceCanvas.clear(lAlien);
-                spaceCanvas.clear(spaceship);
-                animationTimer.stop();
+            if ( lAlien.intersects(spaceship) ) {
+                //Remove 1 live of player
+                player.setLives( player.getLives() - 1 );
+
+                if (player.getLives() == 0) {
+                    stage.setScene( gameOverView.getGameOverScene() );
+                    animationTimer.stop();
+                } else {
+
+                    for (Alien lAlien2: mAliens) {
+                        //Clear and reset aliens
+                        spaceCanvas.clear(lAlien2);
+                        mAliens = new ArrayList<>();
+                        //Draw spaceship
+                        spaceCanvas.draw(spaceship);
+                    }
+                    createAliens(this.aliensPerRow, this.aliensPerColumn, this.alienXSpeed);
+                }
+
+                break;
             }
         }
     }
@@ -291,7 +320,7 @@ public class Game extends Application {
     }
 
     private void createSpaceship() {
-        spaceship = Spaceship.spaceship1((int) canvas.getWidth() / 2, (int) canvas.getHeight(), 5);
+        spaceship = Spaceship.spaceship1((int) canvas.getWidth() / 2, (int) canvas.getHeight() - 20, 5);
         //Get 1st frame of spaceship
         spaceship.getSprite().setWidth( spaceship.getSprite().getWidth() / 2 );
         //Modify x, y positions on canvas of spaceship with its width and height
@@ -308,7 +337,7 @@ public class Game extends Application {
         //Init x, y positions on canvas
         int originX = 0;
         int x = originX;
-        int y = 0;
+        int y = 25;
 
         this.aliensHaveNotJustBeenCreated = false;
 
@@ -365,11 +394,9 @@ public class Game extends Application {
 
         //Draw bullet
         spaceCanvas.draw(bullet);
-
     }
 
-
-    private void createExplosion(int x, int y, long now, long lastUpdateExplosion) {
+    private void createExplosion(int x, int y) {
         Explosion explosion = Explosion.explosion1(x, y);
         explosion.setWidth(explosion.getWidth() / 6);
         explosion.setHeight(explosion.getHeight() / 6);
