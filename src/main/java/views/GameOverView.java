@@ -25,6 +25,7 @@ public class GameOverView {
     private GameOverView() {
         initGameOverLayer();
         this.gameOverScene = new Scene( this.gameOverLayer );
+        gameOverScene.getStylesheets().add(getClass().getResource("/css/app.css").toExternalForm());
     }
 
     private void initGameOverLayer() {

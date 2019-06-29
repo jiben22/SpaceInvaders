@@ -36,9 +36,9 @@ public class OptionsView {
     private  ImageView imageViewAlien;
     private int indexAlien = 0;
 
-    private Label backgroundLabel = new Label("Background");
-    private Button leftBackgroundButton = new Button("<");
-    private Button rightBackgroundButton = new Button(">");
+    private Label wallpaperLabel = new Label("Wallpaper");
+    private Button leftWallpaperButton = new Button("<");
+    private Button rightWallpaperButton = new Button(">");
 
     private Label levelLabel = new Label("Level");
     private ToggleButton easyButton = new ToggleButton("Easy");
@@ -55,6 +55,7 @@ public class OptionsView {
     private OptionsView() {
         initOptionsLayer();
         this.optionsScene = new Scene( this.optionsLayer );
+        optionsScene.getStylesheets().add(getClass().getResource("/css/app.css").toExternalForm());
     }
 
     private void initOptionsLayer() {
@@ -63,14 +64,14 @@ public class OptionsView {
         vBox.setSpacing(50);
         vBox.setPrefSize(600, 600);
 
-        BorderPane backgroundBorderPane = createBackgroundBorderPane();
+        BorderPane wallpaperBorderPane = createWallpaperBorderPane();
         HBox levelHBox = createLevelHBox();
         //BorderPane alienBorderPane = createAliensBorderPane();
         HBox cancelValidationHBox = createCancelValidateHBox();
 
         //Add all components to vBox
         vBox.getChildren().addAll(
-                backgroundBorderPane,
+                wallpaperBorderPane,
                 levelHBox,
                 cancelValidationHBox
         );
@@ -81,7 +82,7 @@ public class OptionsView {
         optionsLayer.setStyle("-fx-background-color: black");
     }
 
-    private BorderPane  createBackgroundBorderPane() {
+    private BorderPane  createWallpaperBorderPane() {
         BorderPane borderPane = new BorderPane();
 
         //Path of wallpapers
@@ -101,15 +102,15 @@ public class OptionsView {
 
         imageViewWallpaper = imageViewsWallpapers.get( indexWallpaper );
         //Add components to VBox
-        borderPane.setTop( backgroundLabel );
-        borderPane.setRight( rightBackgroundButton );
-        borderPane.setLeft( leftBackgroundButton );
+        borderPane.setTop( wallpaperLabel );
+        borderPane.setRight( rightWallpaperButton );
+        borderPane.setLeft( leftWallpaperButton );
         borderPane.setCenter( imageViewWallpaper );
 
         //Alignment
-        BorderPane.setAlignment( backgroundLabel, Pos.CENTER );
-        BorderPane.setAlignment( rightBackgroundButton, Pos.CENTER );
-        BorderPane.setAlignment( leftBackgroundButton, Pos.CENTER );
+        BorderPane.setAlignment( wallpaperLabel, Pos.CENTER );
+        BorderPane.setAlignment( rightWallpaperButton, Pos.CENTER );
+        BorderPane.setAlignment( leftWallpaperButton, Pos.CENTER );
         BorderPane.setAlignment( imageViewWallpaper, Pos.CENTER );
         //Margin/Padding
         BorderPane.setMargin( imageViewWallpaper, new Insets(50,20,0,20) );

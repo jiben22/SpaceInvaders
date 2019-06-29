@@ -1,17 +1,12 @@
 package views;
 
-import com.sun.javafx.scene.control.LabeledText;
-import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import lombok.Getter;
 import lombok.Setter;
 import model.SpaceCanvas;
-
-import java.awt.*;
 
 @Setter @Getter
 public class GameView {
@@ -28,6 +23,7 @@ public class GameView {
     private GameView() {
         initGameLayer();
         this.gameScene = new Scene( this.gameLayer );
+        gameScene.getStylesheets().add(getClass().getResource("/css/app.css").toExternalForm());
     }
 
     private void initGameLayer() {

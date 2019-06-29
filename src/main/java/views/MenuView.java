@@ -28,6 +28,7 @@ public class MenuView {
     private MenuView() {
         initMenuLayer();
         this.menuScene = new Scene( this.menuLayer );
+        menuScene.getStylesheets().add(getClass().getResource("/css/app.css").toExternalForm());
     }
 
     private void initMenuLayer() {
