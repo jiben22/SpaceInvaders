@@ -20,6 +20,8 @@ public class OptionsController extends Controller{
             int indexWallpaper = optionsView.getIndexWallpaper();
             List<ImageView> imageViews = optionsView.getImageViewsWallpapers();
 
+
+
             //Check if there are wallpapers left
             if (indexWallpaper > 0) {
                 changeImageViewWallpaper(indexWallpaper - 1);
@@ -66,11 +68,14 @@ public class OptionsController extends Controller{
 
         //Validate
         optionsView.getValidateButton().setOnAction(actionEvent -> {
+            menuView.getVBox().getChildren().remove(menuView.getOptionsButton());
+            menuView.getNewGameButton().setText("Play");
 
             main.updateParametersGame();
             //Load game and show game scene
             main.loadGame();
             stage.setScene(gameView.getGameScene());
+
         });
     }
 
