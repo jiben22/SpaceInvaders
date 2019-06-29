@@ -36,7 +36,7 @@ public class MenuView {
         vBox.setPrefSize(600, 600);
 
         //Add Space Invaders logo
-        ImageView imageViewLogo = new ImageView(new Image("./images/logo_spaceInvaders.jpg"));
+        ImageView imageViewLogo = new ImageView(new Image("/images/logo_spaceInvaders.jpg"));
 
         //Add components to VBox
         vBox.getChildren().addAll(imageViewLogo, newGameButton, optionsButton, helpButton, exitGame);

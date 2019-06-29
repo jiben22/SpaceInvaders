@@ -1,10 +1,7 @@
-package models;
+package model;
 
-import javafx.scene.media.Media;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.nio.file.Paths;
 
 @Getter @Setter
 public class Game {

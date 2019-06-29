@@ -14,7 +14,6 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import lombok.Getter;
 import lombok.Setter;
-import models.Alien;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,12 +1,9 @@
-package models;
+package model;
 
-import javafx.geometry.Rectangle2D;
 import javafx.scene.image.*;
 import javafx.scene.image.Image;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.awt.*;
 
 
 @Getter @Setter

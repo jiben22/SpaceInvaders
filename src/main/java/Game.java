@@ -1,3 +1,8 @@
+import model.*;
+import views.GameOverView;
+import views.GameView;
+import views.MenuView;
+import views.OptionsView;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.geometry.Rectangle2D;
@@ -5,20 +10,12 @@ import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
-import javafx.util.Duration;
-import models.*;
-import views.GameOverView;
-import views.GameView;
-import views.MenuView;
-import views.OptionsView;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
+
 
 public class Game extends Application {
     private MenuView menuView = MenuView.getInstance();
@@ -27,7 +24,7 @@ public class Game extends Application {
     private GameOverView gameOverView = GameOverView.getInstance();
     private Stage stage;
 
-    private models.Game game;
+    private model.Game game;
 
     private SpaceCanvas spaceCanvas = SpaceCanvas.getInstance();
     private Canvas canvas = spaceCanvas.getCanvas();
@@ -40,12 +37,14 @@ public class Game extends Application {
 
     private AnimationTimer animationTimer;
 
-    private int aliensPerRow = 4;
-    private int aliensPerColumn = 2;
-    private int alienXSpeed = 1;
+    private int aliensPerRow;
+    private int aliensPerColumn;
+    private int alienXSpeed;
 
     //TODO: set to keyboardEvents()
     private boolean isShownMenuLayer = false;
+    private boolean aliensHaveNotJustBeenCreated = false;
+    private boolean parametersUpdated = false;
 
     @Override
     public void start(Stage theStage) {
@@ -61,10 +60,10 @@ public class Game extends Application {
         keyboardEvents(gameView.getGameScene());
         keyboardEvents(optionsView.getOptionsScene());
         //Add stylesheets for scenes
-        menuView.getMenuScene().getStylesheets().add(getClass().getResource("./css/app.css").toExternalForm());
-        gameView.getGameScene().getStylesheets().add(getClass().getResource("./css/app.css").toExternalForm());
-        optionsView.getOptionsScene().getStylesheets().add(getClass().getResource("./css/app.css").toExternalForm());
-        gameOverView.getGameOverScene().getStylesheets().add(getClass().getResource("./css/app.css").toExternalForm());
+        menuView.getMenuScene().getStylesheets().add(getClass().getResource("css/app.css").toExternalForm());
+        gameView.getGameScene().getStylesheets().add(getClass().getResource("css/app.css").toExternalForm());
+        optionsView.getOptionsScene().getStylesheets().add(getClass().getResource("css/app.css").toExternalForm());
+        gameOverView.getGameOverScene().getStylesheets().add(getClass().getResource("css/app.css").toExternalForm());
 
         //Create Scene
         Scene scene = menuView.getMenuScene();
@@ -89,9 +88,13 @@ public class Game extends Application {
         if (spaceship != null) {
             spaceCanvas.clear(spaceship);
         }
-        this.aliensPerRow = 4;
-        this.aliensPerColumn = 2;
-        this.alienXSpeed = 10;
+
+        if(!parametersUpdated) {
+            this.aliensPerRow = 8;
+            this.aliensPerColumn = 3;
+            this.alienXSpeed = 10;
+        }
+
 
         //Reset all components
         this.spaceship = null;
@@ -100,7 +103,7 @@ public class Game extends Application {
         this.mExplosions = new ArrayList<>();
 
         //Create game
-        game = new models.Game(0);
+        game = new model.Game(0);
         //Start music
         //startMusic();
 
@@ -110,7 +113,7 @@ public class Game extends Application {
         //Add Spaceship
         createSpaceship();
         //Add Aliens
-        createAliens(aliensPerRow, aliensPerColumn, alienXSpeed);
+        createAliens(this.aliensPerRow, this.aliensPerColumn, this.alienXSpeed);
 
 
         this.animationTimer = new AnimationTimer() {
@@ -175,30 +178,36 @@ public class Game extends Application {
 
     private boolean moveAliens(boolean areAllowedMovingRight) {
 
-        Iterator<Alien> alienIter = mAliens.iterator();
-
-        while (alienIter.hasNext()) {
-            Alien alien = alienIter.next();
+        for ( Alien lAlien: mAliens ) {
             //Check if aliens do not exceed min/max width of canvas
-
-            if (alien.getRectangle().getMaxX() >= canvas.getWidth()) {
-
+            /*if ( lAlien.getX() >= canvas.getWidth() - lAlien.getWidth() ) {
                 moveDownAliens();
                 areAllowedMovingRight = false;
-            } else if (alien.getRectangle().getMinX() <= 0) {
+            }
+            else if ( lAlien.getX() <= 0 ) {
                 moveDownAliens();
+                areAllowedMovingRight = true;
+            }*/
+
+            if(lAlien.getRectangle().getMaxX() >= canvas.getWidth()) {
+                moveDownAliens();
+                aliensHaveNotJustBeenCreated = true;
+                areAllowedMovingRight = false;
+
+            } else if(lAlien.getRectangle().getMinX() <= 0 && aliensHaveNotJustBeenCreated) {
+                areAllowedMovingRight = true;
+                moveDownAliens();
+            } else if(lAlien.getRectangle().getMinX() < 0){
                 areAllowedMovingRight = true;
             }
 
+
             //Next frame
-            alien.getSprite().nextFrameOffsetX();
+            lAlien.getSprite().nextFrameOffsetX();
 
             //Move according to direction (left/right)
-            if (areAllowedMovingRight) {
-                alien.moveRight();
-            } else {
-                alien.moveLeft();
-            }
+            if( areAllowedMovingRight ) { lAlien.moveRight(); }
+            else { lAlien.moveLeft(); }
         }
 
         return areAllowedMovingRight;
@@ -208,11 +217,9 @@ public class Game extends Application {
 
     private void moveDownAliens() {
 
-        Iterator<Alien> alienIter = mAliens.iterator();
-
-        while (alienIter.hasNext()) {
-            Alien alien = alienIter.next();
-            alien.moveDown();
+        for ( Alien lAlien: mAliens ) {
+            //Move down all aliens
+            lAlien.moveDown();
         }
 
     }
@@ -226,15 +233,15 @@ public class Game extends Application {
 
                 if(lAlien.intersects(lBullet)){
 
-                        //createExplosion(lAlien.getX() - lAlien.getWidth(), lAlien.getY() - lAlien.getHeight(), now, lastUpdateExplosion);
-                        spaceCanvas.clear(lBullet);
-                        spaceCanvas.clear(lAlien);
+                    //createExplosion(lAlien.getX() - lAlien.getWidth(), lAlien.getY() - lAlien.getHeight(), now, lastUpdateExplosion);
+                    spaceCanvas.clear(lBullet);
+                    spaceCanvas.clear(lAlien);
 
-                        //Remove bullet and alien from List
-                        mBullets.remove(indexBullet);
-                        mAliens.remove(indexAlien);
-                        break;
-                    }
+                    //Remove bullet and alien from List
+                    mBullets.remove(indexBullet);
+                    mAliens.remove(indexAlien);
+                    break;
+                }
                 //}
             }
         }
@@ -321,9 +328,11 @@ public class Game extends Application {
 
     private void createAliens(int aliensPerRow, int aliensPerColumn, int alienXSpeed) {
         //Init x, y positions on canvas
-        int originX = 10;
+        int originX = 0;
         int x = originX;
-        int y = 10;
+        int y = 0;
+
+        this.aliensHaveNotJustBeenCreated = false;
 
         int alienHeight = 0;
 
@@ -504,6 +513,8 @@ public class Game extends Application {
     }
 
     private void updateParametersGame() {
+
+        parametersUpdated =true;
         /* Get all options and apply to game */
         //Get wallpaper
         ImageView imageViewWallpaper = optionsView.getImageViewWallpaper();
@@ -519,19 +530,19 @@ public class Game extends Application {
 
         switch (level) {
             case "Easy":
-                this.aliensPerRow = 5;
-                this.aliensPerColumn = 5;
-                this.alienXSpeed = 50;
+                this.aliensPerRow = 8;
+                this.aliensPerColumn = 3;
+                this.alienXSpeed = 10;
                 break;
             case "Medium":
-                this.aliensPerRow = 10;
-                this.aliensPerColumn = 10;
-                this.alienXSpeed = 60;
+                this.aliensPerRow = 16;
+                this.aliensPerColumn = 5;
+                this.alienXSpeed = 15;
                 break;
             case "Hard":
-                this.aliensPerRow = 15;
-                this.aliensPerColumn = 16;
-                this.alienXSpeed = 70;
+                this.aliensPerRow = 20;
+                this.aliensPerColumn = 8;
+                this.alienXSpeed = 20;
                 break;
         }
 

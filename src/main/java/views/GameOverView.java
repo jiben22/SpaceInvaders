@@ -2,16 +2,11 @@ package views;
 
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
-import javafx.scene.text.Text;
 import lombok.Getter;
 import lombok.Setter;
-import models.SpaceCanvas;
 
 @Getter @Setter
 public class GameOverView {

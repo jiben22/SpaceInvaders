@@ -1,4 +1,4 @@
-package models;
+package model;
 
 import javafx.geometry.Rectangle2D;
 import lombok.Getter;
@@ -45,7 +45,7 @@ public abstract class AnimatedComponent {
 
     public void moveDown() {
         spaceCanvas.clear(this);
-        this.y += this.getRectangle().getHeight();
+        this.y += this.getRectangle().getHeight() / 3;
         spaceCanvas.draw(this);
         this.setRectangle(new Rectangle2D(this.x, this.y, this.width, this.height));
     }
