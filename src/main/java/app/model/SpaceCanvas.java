@@ -1,5 +1,6 @@
-package model;
+package app.model;
 
+import app.controller.InformationController;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
@@ -47,48 +48,5 @@ public class SpaceCanvas {
     }
 
 
-    public void writeInformation(Player player) {
-        writeScore(player);
-        writeLivesCredits(player);
-    }
 
-    private void writeScore(Player player) {
-        int x = 20;
-        int y = 20;
-
-        //Clear
-        graphicsContext.clearRect(0, 0, canvas.getWidth(), 30);
-
-        //Draw
-        graphicsContext.setFill(Color.WHITE);
-        graphicsContext.fillText(
-                "SCORE " + player.getScore(),
-                x,
-                y,
-                100);
-    }
-
-    private void writeLivesCredits(Player player) {
-        int x = 20;
-        int y = (int) (canvas.getHeight() - 10);
-
-        //Clear
-        graphicsContext.clearRect(0, y - 10, canvas.getWidth(), 30);
-
-        //Draw
-        graphicsContext.setFill(Color.WHITE);
-        graphicsContext.fillText(
-                getTextLives( player ),
-                x,
-                y);
-    }
-
-    private String getTextLives(Player player) {
-        String lTextLives;
-        int lLives = player.getLives();
-        if(lLives == 1 || lLives == 0) { lTextLives = lLives + " LIFE"; }
-        else { lTextLives = lLives + " LIVES"; }
-
-        return lTextLives;
-    }
 }

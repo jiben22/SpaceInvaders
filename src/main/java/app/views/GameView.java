@@ -1,4 +1,4 @@
-package views;
+package app.views;
 
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
@@ -6,7 +6,7 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import lombok.Getter;
 import lombok.Setter;
-import model.SpaceCanvas;
+import app.model.SpaceCanvas;
 
 @Setter @Getter
 public class GameView {

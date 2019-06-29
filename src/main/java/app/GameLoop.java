@@ -1,8 +1,13 @@
-import model.*;
-import views.GameOverView;
-import views.GameView;
-import views.MenuView;
-import views.OptionsView;
+package app;
+
+import app.controller.InformationController;
+import app.controller.MenuController;
+import app.controller.OptionsController;
+import app.model.*;
+import app.views.GameOverView;
+import app.views.GameView;
+import app.views.MenuView;
+import app.views.OptionsView;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -16,7 +21,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class Game extends Application {
+public class GameLoop extends Application {
+
     private MenuView menuView = MenuView.getInstance();
     private GameView gameView = GameView.getInstance();
     private OptionsView optionsView = OptionsView.getInstance();
@@ -25,6 +31,8 @@ public class Game extends Application {
 
     private SpaceCanvas spaceCanvas = SpaceCanvas.getInstance();
     private Canvas canvas = spaceCanvas.getCanvas();
+    private InformationController informationController = new InformationController(canvas.getGraphicsContext2D(), canvas);
+
 
     private Spaceship spaceship;
     private List<Alien> mAliens;
@@ -33,14 +41,14 @@ public class Game extends Application {
 
     private AnimationTimer animationTimer;
 
-    private model.Game game = new model.Game(0);
+    private app.model.Game game = new app.model.Game(0);
     private Player player = new Player("Player 1", 5, 5);
 
     private int aliensPerRow;
     private int aliensPerColumn;
     private int alienXSpeed;
 
-    private boolean isShownMenuscene = false;
+    private boolean isShownMenuScene = false;
     private boolean aliensHaveNotJustBeenCreated = false;
     private boolean parametersUpdated = false;
 
@@ -50,8 +58,11 @@ public class Game extends Application {
         //Add icon to application
         stage.getIcons().add(new Image("images/icon.png"));
 
-        initMenu();
-        initOptions();
+        // initialisation du menu
+        new MenuController(this, this.stage);
+        // initialisation des options
+        new OptionsController(this, this.stage);
+
 
         //Add events for scenes
         keyboardEvents( menuView.getMenuScene() );
@@ -66,7 +77,7 @@ public class Game extends Application {
         theStage.show();
     }
 
-    private void loadGame() {
+    public void loadGame() {
         //Clear canvas
         if ( mAliens != null ) {
             for (Alien alien : mAliens) {
@@ -85,9 +96,11 @@ public class Game extends Application {
         if ( !parametersUpdated ) {
             this.aliensPerRow = 8;
             this.aliensPerColumn = 3;
-            this.alienXSpeed = 100;
+            this.alienXSpeed = 10;
         }
 
+        this.player.setLives(5);
+        this.player.setScore(0);
 
         //Reset all components
         this.spaceship = null;
@@ -99,7 +112,7 @@ public class Game extends Application {
         //startMusic();
 
         //Write information
-        spaceCanvas.writeInformation(player);
+        this.informationController.writeInformation(player, mAliens);
 
         //Create Spaceship and Aliens
         createSpaceship();
@@ -111,16 +124,19 @@ public class Game extends Application {
             private long lastUpdateExplosion = 0;
             private boolean areAllowedMovingRight = true;
 
+
             @Override
             public void handle(long now) {
                 //Write information
-                spaceCanvas.writeInformation(player);
+                informationController.writeInformation(player, mAliens);
 
                 /*
                  * Les aliens se déplacent de gauche à droite et descendent lorsqu'il touchent le bord du canvas
                  *
                  /* Les bullets se déplacent de bas en haut et détruisent les aliens à leur contact */
+
                 for (int i = 0; i < 5; i++) moveBullets();
+
 
                 /* Check collision between Bullet and Alien
                  * Les aliens se déplacent de gauche à droite et descendent lorsqu'il touchent le bord du canvas
@@ -255,6 +271,7 @@ public class Game extends Application {
         }
     }
 
+
     private void aliensHaveWon() {
         for(Alien lAlien: mAliens){
             if ( lAlien.intersects(spaceship) ) {
@@ -289,6 +306,60 @@ public class Game extends Application {
             createAliens(this.aliensPerRow, this.aliensPerColumn, this.alienXSpeed);
         }
 
+    }
+
+    public void updateParametersGame() {
+
+        parametersUpdated =true;
+        /* Get all options and apply to game */
+        //Get wallpaper
+        ImageView imageViewWallpaper = optionsView.getImageViewWallpaper();
+        imageViewWallpaper.setFitWidth( gameView.getCanvas().getWidth() );
+        imageViewWallpaper.setFitHeight( gameView.getCanvas().getHeight() );
+
+        //Get level
+        String level = optionsView.getEasyButton().getText();
+        if ( optionsView.getEasyButton().isSelected() ) { level = optionsView.getEasyButton().getText(); }
+        else if ( optionsView.getMediumButton().isSelected() ) { level = optionsView.getMediumButton().getText(); }
+        else if ( optionsView.getHardButton().isSelected() ) { level = optionsView.getHardButton().getText(); }
+
+        switch (level) {
+            case "Easy":
+                this.aliensPerRow = 8;
+                this.aliensPerColumn = 3;
+                this.alienXSpeed = 10;
+                parametersUpdated = true;
+                break;
+            case "Medium":
+                this.aliensPerRow = 16;
+                this.aliensPerColumn = 5;
+                this.alienXSpeed = 15;
+                parametersUpdated = true;
+
+                break;
+            case "Hard":
+                this.aliensPerRow = 20;
+                this.aliensPerColumn = 8;
+                this.alienXSpeed = 20;
+                parametersUpdated = true;
+                break;
+        }
+
+        //Add background image to game scene
+        BackgroundImage backgroundImage = new BackgroundImage(
+                new Image(
+                        imageViewWallpaper.getImage().getUrl(),
+                        gameView.getCanvas().getWidth(),
+                        gameView.getCanvas().getHeight(),
+                        false,
+                        true
+                ),
+                BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT,
+                BackgroundPosition.CENTER,
+                BackgroundSize.DEFAULT);
+
+        //Set background image to pane
+        gameView.getGameLayer().setBackground( new Background(backgroundImage) );
     }
 
     private void keyboardEvents(Scene theStage){
@@ -415,165 +486,23 @@ public class Game extends Application {
 
     }
 
-    private void initMenu() {
 
-        MenuView menuView = MenuView.getInstance();
-
-        //New Game
-        menuView.getNewGameButton().setOnAction( actionEvent -> {
-
-            menuView.getVBox().getChildren().remove(menuView.getOptionsButton());
-            menuView.getNewGameButton().setText("Play");
-
-            //Load game
-            if(!isShownMenuscene){
-                loadGame();
-                //Show game scene
-            } else{
-                //Start animationTimer
-                animationTimer.start();
-                isShownMenuscene = false;
-            }
-
-            stage.setScene( gameView.getGameScene() );
-
-        });
-
-        //Options
-        menuView.getOptionsButton().setOnAction( actionEvent -> {
-            //Show options scene
-            stage.setScene( optionsView.getOptionsScene() );
-        });
-
-        //Exit
-        menuView.getExitGame().setOnAction( actionEvent -> System.exit(0) );
-
-        gameOverView.getExitGame().setOnAction(actionEvent -> System.exit(0));
-        gameOverView.getRestartButton().setOnAction(actionEvent -> {
-
-
-            loadGame();
-            stage.setScene( gameView.getGameScene() );
-
-        });
-    }
-
-    private void initOptions() {
-        OptionsView optionsView = OptionsView.getInstance();
-
-        //Left Wallpaper
-        optionsView.getLeftWallpaperButton().setOnAction( actionEvent -> {
-            int indexWallpaper = optionsView.getIndexWallpaper();
-            List<ImageView> imageViews = optionsView.getImageViewsWallpapers();
-
-            //Check if there are wallpapers left
-            if ( indexWallpaper > 0 ) { changeImageViewWallpaper( indexWallpaper-1 ); }
-        });
-
-        //Right Wallpaper
-        optionsView.getRightWallpaperButton().setOnAction( actionEvent -> {
-            int indexWallpaper = optionsView.getIndexWallpaper();
-            List<ImageView> imageViews = optionsView.getImageViewsWallpapers();
-
-            //Check if there are wallpapers left
-            if ( indexWallpaper < imageViews.size()-1 ) {
-                changeImageViewWallpaper( indexWallpaper+1);
-            }
-
-            if(indexWallpaper == imageViews.size()-1) {
-                optionsView.getRightAlienButton().setVisible(false);
-            }
-        });
-
-        //Cancel
-        optionsView.getCancelButton().setOnAction( actionEvent -> {
-            //Show menu scene
-            stage.setScene( menuView.getMenuScene() );
-        });
-
-        //Validate
-        optionsView.getValidateButton().setOnAction( actionEvent -> {
-            updateParametersGame();
-
-            //Load game and show game scene
-            loadGame();
-            stage.setScene( gameView.getGameScene() );
-        });
-    }
-
-    private void updateParametersGame() {
-
-        parametersUpdated =true;
-        /* Get all options and apply to game */
-        //Get wallpaper
-        ImageView imageViewWallpaper = optionsView.getImageViewWallpaper();
-        imageViewWallpaper.setFitWidth( gameView.getCanvas().getWidth() );
-        imageViewWallpaper.setFitHeight( gameView.getCanvas().getHeight() );
-
-        //Get level
-        String level = optionsView.getEasyButton().getText();
-        if ( optionsView.getEasyButton().isSelected() ) { level = optionsView.getEasyButton().getText(); }
-        else if ( optionsView.getMediumButton().isSelected() ) { level = optionsView.getMediumButton().getText(); }
-        else if ( optionsView.getHardButton().isSelected() ) { level = optionsView.getHardButton().getText(); }
-
-        switch (level) {
-            case "Easy":
-                this.aliensPerRow = 8;
-                this.aliensPerColumn = 3;
-                this.alienXSpeed = 10;
-                break;
-            case "Medium":
-                this.aliensPerRow = 16;
-                this.aliensPerColumn = 5;
-                this.alienXSpeed = 15;
-                break;
-            case "Hard":
-                this.aliensPerRow = 20;
-                this.aliensPerColumn = 8;
-                this.alienXSpeed = 20;
-                break;
-        }
-
-        //Add background image to game scene
-        BackgroundImage backgroundImage = new BackgroundImage(
-                new Image(
-                        imageViewWallpaper.getImage().getUrl(),
-                        gameView.getCanvas().getWidth(),
-                        gameView.getCanvas().getHeight(),
-                        false,
-                        true
-                ),
-                BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT,
-                BackgroundPosition.CENTER,
-                BackgroundSize.DEFAULT);
-
-        //Set background image to pane
-        gameView.getGameLayer().setBackground( new Background(backgroundImage) );
-    }
-
-    private void changeImageViewWallpaper(int indexWallpaper) {
-        //Increment index of wallpaper
-        optionsView.setIndexWallpaper( indexWallpaper );
-        //Change wallpaper
-        ImageView imageView = optionsView.getImageViewsWallpapers().get( optionsView.getIndexWallpaper() );
-        optionsView.getImageViewWallpaper().setImage( imageView.getImage() );
-    }
 
     private void pause() {
         //Check game is launching
         if ( animationTimer != null ) {
 
             //If menu scene is not shown
-            if ( !isShownMenuscene ) {
+            if ( !isShownMenuScene) {
                 //Show menu scene
                 stage.setScene( menuView.getMenuScene() );
                 //Stop animationTimer
                 animationTimer.stop();
-                isShownMenuscene = true;
+                isShownMenuScene = true;
             } else {
                 //Start animationTimer
                 animationTimer.start();
-                isShownMenuscene = false;
+                isShownMenuScene = false;
 
                 //Show game scene
                 stage.setScene( gameView.getGameScene() );

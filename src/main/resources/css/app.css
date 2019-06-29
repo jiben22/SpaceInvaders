@@ -34,6 +34,10 @@
     -fx-text-fill: black;
 }
 
+.text-field {
+    -fx-font-family: 'Press Start 2P', cursive;
+}
+
 #gameover {
     -fx-text-fill: red;
     -fx-font-size: 40;
