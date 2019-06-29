@@ -4,6 +4,7 @@ import app.model.Player;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 
 import java.util.List;
 
@@ -21,6 +22,8 @@ public class InformationController {
         writeScore(player);
         writeLivesCredits(player);
         writeAliensNumber(aliens);
+        graphicsContext.setFont(new Font("Press Start 2P", 10));
+
     }
 
     private void writeScore(Player player) {
@@ -67,9 +70,13 @@ public class InformationController {
 
         String lTextAliensNumber;
         int lAliensNumber = aliens.size();
-        lTextAliensNumber = lAliensNumber + " ALIENS LEFT";
+        if(lAliensNumber == 1) {
+            lTextAliensNumber = lAliensNumber + " ALIEN LEFT";
+        } else {
+            lTextAliensNumber = lAliensNumber + " ALIENS LEFT";
+        }
 
-        int x = (int) canvas.getWidth() - 100;
+        int x = (int) canvas.getWidth() - 150;
         int y = 20;
 
         //Clear
