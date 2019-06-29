@@ -21,7 +21,6 @@ public class MenuView {
     private Pane menuLayer = new Pane();
     private Button newGameButton = new Button("New Game");
     private Button optionsButton = new Button("Options");
-    private Button helpButton = new Button("Help");
     private Button exitGame = new Button("Exit");
     private VBox vBox = new VBox();
 
@@ -40,7 +39,7 @@ public class MenuView {
         ImageView imageViewLogo = new ImageView(new Image("/images/logo_spaceInvaders.jpg"));
 
         //Add components to VBox
-        vBox.getChildren().addAll(imageViewLogo, newGameButton, optionsButton, helpButton, exitGame);
+        vBox.getChildren().addAll(imageViewLogo, newGameButton, optionsButton, exitGame);
 
         //Add vbox to menu layer
         menuLayer.getChildren().add(vBox);

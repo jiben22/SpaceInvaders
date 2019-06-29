@@ -37,7 +37,6 @@ public class GameLoop extends Application {
     private Spaceship spaceship;
     private List<Alien> mAliens;
     private List<Bullet> mBullets;
-    private List<Explosion> mExplosions;
 
     private AnimationTimer animationTimer;
 
@@ -106,10 +105,6 @@ public class GameLoop extends Application {
         this.spaceship = null;
         this.mAliens = new ArrayList<>();
         this.mBullets = new ArrayList<>();
-        this.mExplosions = new ArrayList<>();
-
-        //Start music
-        //startMusic();
 
         //Write information
         this.informationController.writeInformation(player, mAliens);
@@ -121,7 +116,6 @@ public class GameLoop extends Application {
         //Create a animation timer
         this.animationTimer = new AnimationTimer() {
             private long lastUpdateAliens = 0;
-            private long lastUpdateExplosion = 0;
             private boolean areAllowedMovingRight = true;
 
 
@@ -233,7 +227,6 @@ public class GameLoop extends Application {
 
                 if ( lAlien.intersects(lBullet) ) {
 
-                    //createExplosion(lAlien.getX() - lAlien.getWidth(), lAlien.getY() - lAlien.getHeight());
                     spaceCanvas.clear(lBullet);
                     spaceCanvas.clear(lAlien);
 
@@ -450,7 +443,7 @@ public class GameLoop extends Application {
         Bullet bullet = Bullet.bullet1(
                 spaceship.getX() + spaceship.getWidth() / 2,
                 spaceship.getY() - spaceship.getHeight(),
-                5
+                1
         );
         //Define frame of size of bullet
         bullet.getSprite().setHeight( bullet.getSprite().getHeight() / bullet.getSprite().getNbFrames() );
@@ -465,25 +458,6 @@ public class GameLoop extends Application {
 
         //Draw bullet
         spaceCanvas.draw(bullet);
-    }
-
-    private void createExplosion(int x, int y) {
-        Explosion explosion = Explosion.explosion1(x, y);
-        explosion.setWidth(explosion.getWidth() / 6);
-        explosion.setHeight(explosion.getHeight() / 6);
-
-        mExplosions.add(explosion);
-
-        //TODO: draw and clear explosion sprite
-        spaceCanvas.draw(explosion);
-
-        for(int i =0; i<3000; i++){
-            for(Explosion expl : mExplosions) {
-                spaceCanvas.clear(expl);
-            }
-        }
-        mExplosions.remove(explosion);
-
     }
 
 
